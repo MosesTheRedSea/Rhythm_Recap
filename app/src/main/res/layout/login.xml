@@ -31,7 +31,7 @@
         <!-- Edit Your Email !-->
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textEmailLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Username"
@@ -39,7 +39,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editTextEmail"
+            android:id="@+id/editTextEmailLogin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
@@ -54,7 +54,7 @@
         <!-- Edit Your Email !-->
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textPasswordLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -63,7 +63,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editTextPassword"
+            android:id="@+id/editTextPasswordLogin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
