@@ -12,4 +12,6 @@ public class signUp extends AppCompatActivity {
         setContentView(R.layout.signup);
     }
 
+
+
 }
