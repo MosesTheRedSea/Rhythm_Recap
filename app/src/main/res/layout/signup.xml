@@ -11,11 +11,8 @@
         android:layout_width="607dp"
         android:layout_height="1012dp"
         android:scaleType="centerCrop"
-<<<<<<< HEAD
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.015"
-=======
->>>>>>> 32448466277660d69eea0bef9af5d35d6a4ece93
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/login_background" />
