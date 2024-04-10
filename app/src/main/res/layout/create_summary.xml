@@ -20,6 +20,23 @@
         app:layout_constraintVertical_bias="0.515"
         app:srcCompat="@drawable/plain_background" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/oneYearButton"
+        style="@android:style/Widget.Button"
+        android:layout_width="164dp"
+        android:layout_height="59dp"
+        android:background="@drawable/profile_actions_background"
+        android:text="1 Year"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.909" />
+
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
@@ -35,123 +52,83 @@
         app:tint="#037776" />
 
 
-
-    <ImageView
-        android:id="@+id/profileImageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="92dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/profile_pic2" />
-
     <TextView
-        android:id="@+id/userNameProfile"
+        android:id="@+id/textSummary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="John Doe"
+        android:text="Your Summary"
         android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.358" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="326dp"
+        android:layout_height="589dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.229"
+        app:srcCompat="@drawable/GTWRAPPED" />
 
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/createSummaryButton"
+        android:id="@+id/oneMonthButton"
         style="@android:style/Widget.Button"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
+        android:layout_width="164dp"
+        android:layout_height="59dp"
         android:background="@drawable/profile_actions_background"
-        android:text="Create Summary"
+        android:text="1 Month"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.445" />
+        app:layout_constraintVertical_bias="0.997" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/recommendationsButton"
+        android:id="@+id/oneWeekButton"
         style="@android:style/Widget.Button"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
+        android:layout_width="164dp"
+        android:layout_height="59dp"
         android:background="@drawable/profile_actions_background"
-        android:text="Recommendations"
+        android:text="1 Week"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.57" />
+        app:layout_constraintVertical_bias="0.909" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/exportSummariesButton"
+        android:id="@+id/allTimeButton"
         style="@android:style/Widget.Button"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
+        android:layout_width="164dp"
+        android:layout_height="59dp"
         android:background="@drawable/profile_actions_background"
-        android:text="ExportSummaries"
+        android:text="All Time"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.692" />
-
-    <ImageView
-        android:id="@+id/gameImageButton"
-        android:layout_width="81dp"
-        android:layout_height="84dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975"
-        app:srcCompat="@drawable/HomeImahe" />
-
-    <ImageView
-        android:id="@+id/homeImageButton"
-        android:layout_width="81dp"
-        android:layout_height="84dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.148"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975"
-        tools:srcCompat="@drawable/Gameimage" />
-
-    <ImageView
-        android:id="@+id/profileImageButton"
-        android:layout_width="81dp"
-        android:layout_height="84dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.848"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975"
-        tools:srcCompat="@drawable/Profimagewidgit" />
+        app:layout_constraintVertical_bias="0.997" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
