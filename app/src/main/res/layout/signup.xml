@@ -11,8 +11,11 @@
         android:layout_width="607dp"
         android:layout_height="1012dp"
         android:scaleType="centerCrop"
+<<<<<<< HEAD
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.015"
+=======
+>>>>>>> 32448466277660d69eea0bef9af5d35d6a4ece93
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/login_background" />
@@ -31,7 +34,7 @@
 
 
         <TextView
-            android:id="@+id/textUsername"
+            android:id="@+id/textUsernameSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Your Username"
@@ -39,7 +42,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editUsername"
+            android:id="@+id/editUsernameSignUp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
@@ -53,7 +56,7 @@
         <!-- Edit Your Email !-->
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textEmailSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Your Email"
@@ -62,7 +65,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editTextEmail"
+            android:id="@+id/editTextEmailSignUp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
@@ -77,7 +80,7 @@
         <!-- Edit Your Email !-->
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textViewPasswordSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -86,7 +89,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editTextPassword"
+            android:id="@+id/editPasswordSignUp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
