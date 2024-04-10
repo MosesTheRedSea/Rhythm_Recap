@@ -15,9 +15,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/plain_background" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -173,6 +172,5 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
-    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
