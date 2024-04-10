@@ -131,4 +131,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.67" />
+
+    <ImageView
+        android:id="@+id/bottomLeftImage"
+        android:layout_width="246dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.006"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.991"
+        app:srcCompat="@drawable/sideimageforbottomleft" />
+
+    <TextView
+        android:id="@+id/textUsernameWRAP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        tools:layout_editor_absoluteX="314dp"
+        tools:layout_editor_absoluteY="683dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
