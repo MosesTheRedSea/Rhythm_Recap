@@ -1,6 +1,9 @@
 package com.example.spotify_encore;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +27,15 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
+// This class interacts with Firebase Authentication to perform login, signup, logout, etc.
+// Initializes Firebase in your application. This could be part of MyApplication or a separate class.
 public class applicationCore extends AppCompatActivity {
 
     public static final String CLIENT_ID = "edd6322503f640c1a8514e901e175453";
@@ -39,11 +50,36 @@ public class applicationCore extends AppCompatActivity {
 
     private TextView tokenTextView, codeTextView, profileTextView;
 
+    private static final int SPLASH_SCREEN_TIMEOUT = 3000;
+
+    private String authentication;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setContentView(R.layout.welcome_screen);
+
+        ImageView backgroundImageView = findViewById(R.id.background);
+        ImageView logoImageView = findViewById(R.id.rhythmlogo);
+
+        Animation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+        fadeOut.setDuration(1000);
+
+        backgroundImageView.startAnimation(fadeOut);
+        logoImageView.startAnimation(fadeOut);
+
+        new Handler().postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                Intent intent = new Intent(applicationCore.this, authentication.class);
+                startActivity(intent);
+            }
+        }, SPLASH_SCREEN_TIMEOUT);
 
         /*
         // Initialize the views
@@ -205,10 +241,8 @@ public class applicationCore extends AppCompatActivity {
     }
 
 
-
-
     public void userSignUp(View view) {
-        Intent sign = new Intent(this, signUp.class);
+        Intent sign = new Intent(this, authentication.class);
         startActivity(sign);
     }
 
