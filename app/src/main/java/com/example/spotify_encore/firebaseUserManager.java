@@ -42,18 +42,18 @@ public class firebaseUserManager extends AppCompatActivity {
 
 
     private void pressHomeButton() {
-        AccountSettingsButton = findViewById(R.id.AccountSettingsButton);
+        HomeButton = findViewById(R.id.HomeButton);
 
     }
 
     private void pressViewSummaryButton() {
-        AccountSettingsButton = findViewById(R.id.AccountSettingsButton);
+        ViewSummaryButton = findViewById(R.id.ViewSummaryButton);
 
     }
 
 
     private void pressSpotifyInfromationButton() {
-        AccountSettingsButton = findViewById(R.id.AccountSettingsButton);
+        SpotifyInfromationButton = findViewById(R.id.SpotifyInfromationButton);
 
     }
 
