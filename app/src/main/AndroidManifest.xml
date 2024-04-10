@@ -13,10 +13,9 @@
         android:theme="@style/Theme.Spotify_Encore"
         tools:targetApi="31">
 
-        <activity
-            android:name=".signUp" />
-        <activity
-            android:name=".login"/>
+        <activity android:name=".authentication">
+            <!-- intent filters if any -->
+        </activity>
 
         <activity
             android:name=".applicationCore"

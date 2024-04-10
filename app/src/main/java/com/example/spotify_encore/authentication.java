@@ -26,18 +26,27 @@ public class authentication extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         String action = getIntent().getStringExtra("userAction");
+
+        assert action != null;
 
         if (action.equals("LogIn")) {
             setContentView(R.layout.login);
-        } else if (action.equals("SignIn")) {
+        } else if (action.equals("SignUp")) {
             setContentView(R.layout.signup);
         }
-
-
-
     }
+
+    public void userSignUp(View view) {
+        Intent sign = new Intent(this, authentication.class);
+        String authentication = "SignUp";
+        sign.putExtra("userAction", authentication);
+        startActivity(sign);
+    }
+
 
 
 }

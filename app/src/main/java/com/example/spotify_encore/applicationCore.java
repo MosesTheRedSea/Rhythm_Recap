@@ -59,7 +59,7 @@ public class applicationCore extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.welcome_screen);
 
 
@@ -100,12 +100,6 @@ public class applicationCore extends AppCompatActivity {
         startActivity(sign);
     }
 
-    public void userSignUp(View view) {
-        Intent sign = new Intent(this, authentication.class);
-        String authentication = "SignUp";
-        sign.putExtra("userAction", authentication);
-        startActivity(sign);
-    }
 
     /**
      * Get token from Spotify
