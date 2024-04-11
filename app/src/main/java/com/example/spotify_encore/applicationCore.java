@@ -1,4 +1,5 @@
 package com.example.spotify_encore;
+
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -7,6 +8,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -27,6 +30,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,8 +57,8 @@ public class applicationCore extends AppCompatActivity {
 
     private static final int SPLASH_SCREEN_TIMEOUT = 3000;
 
-
-
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +67,14 @@ public class applicationCore extends AppCompatActivity {
 
         setContentView(R.layout.welcome_screen);
 
-
-
         /*
         // Initialize the views
         tokenTextView = (TextView) findViewById(R.id.token_text_view);
         codeTextView = (TextView) findViewById(R.id.code_text_view);
         profileTextView = (TextView) findViewById(R.id.response_text_view);
-
+/ If no user is signed in, stay on the current login/sign-up activity.
+        // Check if user is signed in (non-null) and update UI accordingly.
+        user = auth.getCurrent
         // Initialize the buttons
         Button tokenBtn = (Button) findViewById(R.id.token_btn);
         Button codeBtn = (Button) findViewById(R.id.code_btn);
@@ -90,15 +95,15 @@ public class applicationCore extends AppCompatActivity {
         });
         */
 
-
     }
-
     public void getStartedButton(View view) {
         Intent sign = new Intent(this, authentication.class);
         String authentication = "LogIn";
         sign.putExtra("userAction", authentication);
         startActivity(sign);
     }
+
+
 
 
     /**
@@ -144,46 +149,7 @@ public class applicationCore extends AppCompatActivity {
         }
     }
 
-    /**
-     * Get user profile
-     * This method will get the user profile using the token
-     */
-    public void onGetUserProfileClicked() {
-        if (mAccessToken == null) {
-            Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        // Create a request to get the user profile
-        final Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/me")
-                .addHeader("Authorization", "Bearer " + mAccessToken)
-                .build();
-
-        cancelCall();
-        mCall = mOkHttpClient.newCall(request);
-
-        mCall.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("HTTP", "Failed to fetch data: " + e);
-                Toast.makeText(applicationCore.this, "Failed to fetch data, watch Logcat for more details",
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    final JSONObject jsonObject = new JSONObject(response.body().string());
-                    setTextAsync(jsonObject.toString(3), profileTextView);
-                } catch (JSONException e) {
-                    Log.d("JSON", "Failed to parse data: " + e);
-                    Toast.makeText(applicationCore.this, "Failed to parse data, watch Logcat for more details",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 
     /**
      * Creates a UI thread to update a TextView in the background

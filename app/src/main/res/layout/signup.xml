@@ -69,7 +69,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/editPasswordSignUp"
+            android:id="@+id/editTextPasswordSignUp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
@@ -80,18 +80,6 @@
             android:padding="10dp"
             android:textColor="#5c5f72"
             android:textSize="16sp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/connectSpotifyButton"
-            style="@android:style/Widget.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:background="@drawable/login_button_background"
-            android:text="Connect Spotify"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/createAccountButtonSignUp"

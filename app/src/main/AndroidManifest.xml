@@ -17,6 +17,10 @@
             <!-- intent filters if any -->
         </activity>
 
+        <activity android:name=".firebaseUserManager">
+            <!-- intent filters if any -->
+        </activity>
+
         <activity
             android:name=".applicationCore"
             android:exported="true"
