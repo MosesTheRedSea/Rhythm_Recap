@@ -83,16 +83,34 @@ public class signUp extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String email, password;
-                email = String.valueOf(editTextEmailSignUp);
-                password = String.valueOf(editTextPasswordSignUp);
+                email = editTextEmailSignUp.getText().toString();
+                password = editTextPasswordSignUp.getText().toString();
+
+                if (TextUtils.isEmpty(email)) {
+                    editTextEmailSignUp.setError("Invalid Email");
+                    editTextEmailSignUp.requestFocus();
+                    return;
+                }
+
+                if (TextUtils.isEmpty(password)) {
+                    editTextPasswordSignUp.setError("Invalid Password");
+                    editTextPasswordSignUp.requestFocus();
+                    return;
+                }
+
+                registerUser(email, password);
+
+                /*
 
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(signUp.this, "Enter Email", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(password)) {
                     Toast.makeText(signUp.this, "Enter Password", Toast.LENGTH_SHORT).show();
                 } else {
-                    registerUser(email, password);
+
                 }
+                */
+
             }
         });
     }
@@ -117,4 +135,6 @@ public class signUp extends AppCompatActivity {
                     }
                 });
     }
+
+
 }

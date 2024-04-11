@@ -108,12 +108,11 @@ public class login extends AppCompatActivity {
                             // Sign in success - Show the Home Page For the User
                             Toast.makeText(login.this, "Login Successful.",
                                     Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
 
                             Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
                             intent.putExtra("userAction", "homepage");
                             startActivity(intent);
-                            finish();
-
 
                         } else {
                             // If sign in fails, display a message to the user.

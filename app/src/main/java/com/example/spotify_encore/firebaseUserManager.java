@@ -50,6 +50,7 @@ public class firebaseUserManager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
+        signOut = findViewById(R.id.signOutAccountSettings);
         user = auth.getCurrentUser();
 
         if (user == null) {
@@ -57,25 +58,22 @@ public class firebaseUserManager extends AppCompatActivity {
             intent.putExtra("userAction", "LogIn");
             startActivity(intent);
             finish();
-
         }
 
-            String action = getIntent().getStringExtra("userAction");
+        String action = getIntent().getStringExtra("userAction");
 
-            if (action != null) {
-                if (action.equals("accountSettings")) {
-                    setContentView(R.layout.account_setting);
+        if (action != null) {
+            if (action.equals("accountSettings")) {
+                setContentView(R.layout.account_setting);
 
-                } else if (action.equals("homepage")) {
-                    setContentView(R.layout.homepage);
+            } else if (action.equals("homepage")) {
+                setContentView(R.layout.homepage);
 
-                } else if (action.equals("gamepage")) {
-                    setContentView(R.layout.game);
-                }
+            } else if (action.equals("gamepage")) {
+                setContentView(R.layout.game);
             }
+        }
 
-
-        signOut = findViewById(R.id.signOutAccountSettings);
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
