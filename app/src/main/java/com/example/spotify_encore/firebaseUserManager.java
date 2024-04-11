@@ -15,7 +15,7 @@ public class firebaseUserManager extends AppCompatActivity {
     private AppCompatButton HomeButton;
     private AppCompatButton ViewSummaryButton;
     private AppCompatButton SpotifyInfromationButton;
-    private AppCompatButton NotificationsButton;
+    private AppCompatButton friendsButton;
     private Button AccountSettingsButton;
 
     // These are only outline methods they can be changed if needed
@@ -57,8 +57,8 @@ public class firebaseUserManager extends AppCompatActivity {
 
     }
 
-    private void pressNotificationsButton() {
-        AccountSettingsButton = findViewById(R.id.AccountSettingsButton);
+    private void pressfriendsButton() {
+        AccountSettingsButton = findViewById(R.id.friendsButton);
 
     }
 

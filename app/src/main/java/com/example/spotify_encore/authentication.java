@@ -15,6 +15,9 @@ public class authentication extends AppCompatActivity {
 
     // Sign Up Information
 
+    private TextView signUpEmail;
+    private TextView signUpUsername;
+    private TextView signUpPassword;
 
 
 
