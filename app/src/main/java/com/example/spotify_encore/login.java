@@ -79,47 +79,50 @@ public class login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String email, password;
+
                 email = String.valueOf(editTextEmailLogin);
+
                 password = String.valueOf(editTextPasswordLogin);
 
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(login.this, "Enter Email", Toast.LENGTH_SHORT).show();
                     return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
+                } else if (TextUtils.isEmpty(password)) {
                     Toast.makeText(login.this, "Enter Password", Toast.LENGTH_SHORT).show();
                     return;
+                } else {
+                    userLogIn(email, password);
                 }
-
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success - Show the Home Page For the User
-                                    Toast.makeText(login.this, "Login Successful.",
-                                            Toast.LENGTH_SHORT).show();
-
-                                        Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
-                                        intent.putExtra("userAction", "homepage");
-                                        startActivity(intent);
-                                        finish();
-
-
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(login.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
             }
         });
 
 
     }
 
+    public void userLogIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success - Show the Home Page For the User
+                            Toast.makeText(login.this, "Login Successful.",
+                                    Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+                            intent.putExtra("userAction", "homepage");
+                            startActivity(intent);
+                            finish();
+
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(login.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
     public void userSignUp(View view) {
         Intent sign = new Intent(this, signUp.class);

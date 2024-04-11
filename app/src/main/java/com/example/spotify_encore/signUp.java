@@ -78,6 +78,7 @@ public class signUp extends AppCompatActivity {
         createAccountButton = findViewById(R.id.createAccountButtonSignUp);
 
         // User creates their new account
+
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,8 +108,6 @@ public class signUp extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), login.class);
                             startActivity(intent);
-                            finish();
-
                         } else {
                             Log.w("Authentication", "createUserWithEmail:failure", task.getException());
                             // If sign in fails, display a message to the user.
