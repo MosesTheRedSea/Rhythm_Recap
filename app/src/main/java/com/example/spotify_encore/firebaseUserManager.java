@@ -50,7 +50,6 @@ public class firebaseUserManager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
-        signOut = findViewById(R.id.signOutAccountSettings);
         user = auth.getCurrentUser();
 
         if (user == null) {
@@ -66,6 +65,20 @@ public class firebaseUserManager extends AppCompatActivity {
             if (action.equals("accountSettings")) {
                 setContentView(R.layout.account_setting);
 
+                signOut = findViewById(R.id.signOutAccountSettings);
+                signOut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        FirebaseAuth.getInstance().signOut();
+
+                        Intent intent = new Intent(getApplicationContext(), authentication.class);
+                        intent.putExtra("userAction", "LogIn");
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
             } else if (action.equals("homepage")) {
                 setContentView(R.layout.homepage);
 
@@ -74,17 +87,6 @@ public class firebaseUserManager extends AppCompatActivity {
             }
         }
 
-        signOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-
-                Intent intent = new Intent(getApplicationContext(), authentication.class);
-                intent.putExtra("userAction", "LogIn");
-                startActivity(intent);
-                finish();
-            }
-        });
     }
 
     public void profileButtonClick(View view) {
