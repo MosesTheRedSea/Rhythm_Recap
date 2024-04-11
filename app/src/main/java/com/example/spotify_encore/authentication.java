@@ -19,6 +19,13 @@ public class authentication extends AppCompatActivity {
     private TextView signUpUsername;
     private TextView signUpPassword;
 
+    private EditText editTextEmailSignUp;
+    private EditText editTextPasswordSignUP;
+    private EditText editTextPasswordSignUp;
+
+    private AppCompatButton createAccountButton;
+
+    private AppCompatButton connectSpotifyAccountButton;
 
 
     // Login Information
@@ -48,6 +55,15 @@ public class authentication extends AppCompatActivity {
         String authentication = "SignUp";
         sign.putExtra("userAction", authentication);
         startActivity(sign);
+    }
+
+    public void initializeSignUpComponenets() {
+
+    }
+
+    //
+    public void initializeLogInComponenets() {
+
     }
 
 
