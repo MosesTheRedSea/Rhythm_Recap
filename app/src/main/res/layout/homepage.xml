@@ -43,7 +43,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="92dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -143,8 +142,8 @@
         <ImageView
             android:id="@+id/homeImageButton"
             android:layout_width="0dp"
-            android:layout_weight=".1"
             android:layout_height="50dp"
+            android:layout_weight=".1"
             tools:srcCompat="@drawable/home_image" />
 
         <ImageView
