@@ -97,9 +97,7 @@ public class applicationCore extends AppCompatActivity {
 
     }
     public void getStartedButton(View view) {
-        Intent sign = new Intent(this, authentication.class);
-        String authentication = "LogIn";
-        sign.putExtra("userAction", authentication);
+        Intent sign = new Intent(this, login.class);
         startActivity(sign);
     }
 

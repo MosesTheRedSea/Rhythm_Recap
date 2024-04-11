@@ -98,16 +98,21 @@ public class authentication extends AppCompatActivity {
 
         String action = getIntent().getStringExtra("userAction");
 
+        mAuth = FirebaseAuth.getInstance();
+
+        editTextEmailSignUp = findViewById(R.id.editTextEmailSignUp);
+        editTextPasswordSignUp = findViewById(R.id.editTextPasswordSignUp);
+        editTextEmailLogin = findViewById(R.id.editTextEmailLogin);
+        editTextPasswordLogin = findViewById(R.id.editTextPasswordLogin);
+
+
         // User Logs into their account
         if (action.equals("LogIn")) {
 
             setContentView(R.layout.login);
 
-            mAuth = FirebaseAuth.getInstance();
-
-            editTextEmailLogin = findViewById(R.id.editTextEmailLogin);
-            editTextPasswordLogin = findViewById(R.id.editTextPasswordLogin);
             loginAccountButton = findViewById(R.id.login_button);
+
             loginAccountButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -116,7 +121,7 @@ public class authentication extends AppCompatActivity {
                     password = String.valueOf(editTextPasswordLogin);
 
                     if (TextUtils.isEmpty(email)) {
-                        Toast.makeText(authentication.this, "Enger Email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(authentication.this, "Enter Email", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -133,10 +138,13 @@ public class authentication extends AppCompatActivity {
                                         // Sign in success - Show the Home Page For the User
                                         Toast.makeText(authentication.this, "Login Successful.",
                                                 Toast.LENGTH_SHORT).show();
+                                        /*
                                         Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
                                         intent.putExtra("userAction", "homepage");
                                         startActivity(intent);
                                         finish();
+                                        */
+
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Toast.makeText(authentication.this, "Authentication failed.",
@@ -145,18 +153,12 @@ public class authentication extends AppCompatActivity {
                                 }
                             });
                 }
-
             });
-
 
         } else if (action.equals("SignUp")) {
 
             setContentView(R.layout.signup);
 
-            mAuth = FirebaseAuth.getInstance();
-
-            editTextEmailSignUp = findViewById(R.id.editTextEmailSignUp);
-            editTextPasswordSignUp = findViewById(R.id.editTextPasswordSignUp);
             createAccountButton = findViewById(R.id.createAccountButtonSignUp);
 
             // User creates their new account
@@ -196,6 +198,11 @@ public class authentication extends AppCompatActivity {
             });
 
         }
+
+
+
+
+
     }
 
     private void retrieveSpotifyInformation() {
@@ -205,12 +212,7 @@ public class authentication extends AppCompatActivity {
 
     }
 
-    public void userSignUp(View view) {
-        Intent sign = new Intent(this, authentication.class);
-        String authentication = "SignUp";
-        sign.putExtra("userAction", authentication);
-        startActivity(sign);
-    }
+
 
 
     /**

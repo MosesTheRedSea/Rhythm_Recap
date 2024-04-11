@@ -17,6 +17,14 @@
             <!-- intent filters if any -->
         </activity>
 
+        <activity android:name=".login">
+            <!-- intent filters if any -->
+        </activity>
+
+        <activity android:name=".signUp">
+            <!-- intent filters if any -->
+        </activity>
+
         <activity android:name=".firebaseUserManager">
             <!-- intent filters if any -->
         </activity>
