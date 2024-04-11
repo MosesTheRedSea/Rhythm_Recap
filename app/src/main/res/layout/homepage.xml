@@ -125,7 +125,6 @@
         android:id="@+id/gameImageButton"
         android:layout_width="95dp"
         android:layout_height="50dp"
-        android:layout_weight=".1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.062"
@@ -139,7 +138,7 @@
         android:id="@+id/homeImageButton"
         android:layout_width="66dp"
         android:layout_height="51dp"
-        android:layout_weight=".1"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -152,7 +151,7 @@
         android:id="@+id/profileImageButton"
         android:layout_width="53dp"
         android:layout_height="54dp"
-        android:layout_weight=".1"
+
         android:onClick="profileButtonClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
