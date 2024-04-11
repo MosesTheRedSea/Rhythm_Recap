@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.515"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/plain_background" />
 
     <ImageView
@@ -68,44 +68,11 @@
 
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/createSummaryButton"
-        style="@android:style/Widget.Button"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:background="@drawable/profile_actions_background"
-        android:text="Create Summary"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.445" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/recommendationsButton"
-        style="@android:style/Widget.Button"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:background="@drawable/profile_actions_background"
-        android:text="Recommendations"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.57" />
-
-    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/exportSummariesButton"
         style="@android:style/Widget.Button"
         android:layout_width="300dp"
         android:layout_height="60dp"
+        android:layout_marginTop="120dp"
         android:background="@drawable/profile_actions_background"
         android:text="ExportSummaries"
         android:textAlignment="center"
@@ -113,45 +80,80 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.692" />
+        app:layout_constraintVertical_bias="0.701" />
 
-    <ImageView
-        android:id="@+id/gameImageButton"
-        android:layout_width="81dp"
-        android:layout_height="84dp"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/recommendationsButton"
+        style="@android:style/Widget.Button"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/profile_actions_background"
+        android:text="Recommendations"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.579" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/createSummaryButton"
+        style="@android:style/Widget.Button"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/profile_actions_background"
+        android:text="Create Summary"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.455" />
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975"
-        app:srcCompat="@drawable/HomeImahe" />
+        app:layout_constraintTop_toBottomOf="@+id/exportSummariesButton"
+        app:layout_constraintVertical_bias="0.86">
 
-    <ImageView
-        android:id="@+id/homeImageButton"
-        android:layout_width="81dp"
-        android:layout_height="84dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.148"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975"
-        tools:srcCompat="@drawable/Gameimage" />
+        <ImageView
+            android:id="@+id/gameImageButton"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/Gameimage" />
 
-    <ImageView
-        android:id="@+id/profileImageButton"
-        android:layout_width="81dp"
-        android:layout_height="84dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.848"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975"
-        tools:srcCompat="@drawable/Profimagewidgit" />
+        <ImageView
+            android:id="@+id/homeImageButton"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="50dp"
+            tools:srcCompat="@drawable/HomeImahe" />
+
+        <ImageView
+            android:id="@+id/profileImageButton"
+            android:layout_width="0dp"
+            android:layout_weight=".1"
+            android:layout_height="50dp"
+            tools:srcCompat="@drawable/Profimagewidgit" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

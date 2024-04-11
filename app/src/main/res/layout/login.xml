@@ -34,7 +34,7 @@
             android:id="@+id/textEmailLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="Email"
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 

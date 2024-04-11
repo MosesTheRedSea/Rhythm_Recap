@@ -30,26 +30,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <TextView
-            android:id="@+id/textUsernameSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Your Username"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/editUsernameSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/text_edit_background"
-            android:ems="10"
-            android:hint="Enter Your Username"
-            android:inputType="text"
-            android:padding="10dp"
-            android:textColor="#5c5f72"
-            android:textSize="16sp" />
+
+
         <!-- Edit Your Email !-->
 
         <TextView

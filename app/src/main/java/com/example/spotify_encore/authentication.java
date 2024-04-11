@@ -26,7 +26,6 @@ public class authentication extends AppCompatActivity {
     // Firebase Information
     private FirebaseAuth mAuth;
 
-
     // Sign Up Information
 
     private TextView signUpEmail;
@@ -106,6 +105,7 @@ public class authentication extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                     // Current User that Has Logged In
                                     FirebaseUser user = mAuth.getCurrentUser();
+
 
                                 } else {
 
