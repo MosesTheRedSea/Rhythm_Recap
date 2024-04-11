@@ -3,14 +3,21 @@ package com.example.spotify_encore;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 // This class interacts with Firebase Authentication to perform login, signup, logout, etc.
@@ -81,6 +88,34 @@ public class authentication extends AppCompatActivity {
                 email = String.valueOf(editTextEmailSignUp);
                 password = String.valueOf(editTextPasswordSignUp);
 
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(authentication.this, "Enger Email", Toast.LENGTH_SHORT).show();
+                }
+
+                if (TextUtils.isEmpty(password)) {
+                    Toast.makeText(authentication.this, "Enter Password", Toast.LENGTH_SHORT).show();
+                }
+
+                // Create a New User if they don't already have an account
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(authentication.this, "Account Created.",
+                                            Toast.LENGTH_SHORT).show();
+                                    // Current User that Has Logged In
+                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                } else {
+
+                                    // If sign in fails, display a message to the user.
+                                    Toast.makeText(authentication.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+
+                                }
+                            }
+                        });
 
             }
         });
