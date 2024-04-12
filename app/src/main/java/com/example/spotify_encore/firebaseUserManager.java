@@ -37,6 +37,7 @@ import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -94,6 +95,7 @@ public class firebaseUserManager extends AppCompatActivity {
     TextView userSpotifyInfo;
     FirebaseUser user;
     AppCompatButton returnHomeButton;
+    AppCompatButton createSummaryButton;
     AppCompatButton goHomeButton;
     AppCompatButton reccomendationButton;
     AppCompatButton generateReccomendation;
@@ -270,6 +272,16 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
+                    createSummaryButton = findViewById(R.id.createSummaryButton);
+                    createSummaryButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+                            intent.putExtra("userAction", "create_summary");
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
 
                 } else if (action.equals("gamepage")) {
                     // Set content view to gamepage layout
@@ -344,6 +356,8 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
+                } else if (action.equals("create_summary")) {
+                    setContentView(R.layout.create_summary);
                 }
             }
         }
@@ -954,4 +968,13 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
 
+//SUmmary
+
+    public void pressCreateSummary(View view) {
+        Intent sett = new Intent(this, firebaseUserManager.class);
+        String authentication = "create_summary";
+        sett.putExtra("userAction", authentication);
+        startActivity(sett);
+        finish();
+    }
 }
