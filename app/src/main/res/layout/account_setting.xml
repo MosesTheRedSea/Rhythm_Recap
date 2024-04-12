@@ -40,7 +40,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="92dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

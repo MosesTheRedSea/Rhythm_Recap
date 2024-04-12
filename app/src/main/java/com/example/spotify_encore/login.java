@@ -80,19 +80,24 @@ public class login extends AppCompatActivity {
             public void onClick(View v) {
                 String email, password;
 
-                email = String.valueOf(editTextEmailLogin);
+                email = editTextEmailLogin.getText().toString();
 
-                password = String.valueOf(editTextPasswordLogin);
+                password = editTextPasswordLogin.getText().toString();
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(login.this, "Enter Email", Toast.LENGTH_SHORT).show();
+                    editTextEmailLogin.setError("Invalid Email");
+                    editTextEmailLogin.requestFocus();
                     return;
-                } else if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(login.this, "Enter Password", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    userLogIn(email, password);
                 }
+
+                if (TextUtils.isEmpty(password)) {
+                    editTextPasswordLogin.setError("Invalid Password");
+                    editTextPasswordLogin.requestFocus();
+                    return;
+                }
+
+                userLogIn(email, password);
+
             }
         });
 

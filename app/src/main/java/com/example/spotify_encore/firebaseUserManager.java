@@ -70,7 +70,7 @@ public class firebaseUserManager extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        FirebaseAuth.getInstance().signOut();
+                        auth.signOut();
 
                         Intent intent = new Intent(getApplicationContext(), authentication.class);
                         intent.putExtra("userAction", "LogIn");

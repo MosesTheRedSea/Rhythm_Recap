@@ -68,14 +68,21 @@ public class applicationCore extends AppCompatActivity {
         setContentView(R.layout.welcome_screen);
 
         /*
+
         // Initialize the views
+
         tokenTextView = (TextView) findViewById(R.id.token_text_view);
         codeTextView = (TextView) findViewById(R.id.code_text_view);
         profileTextView = (TextView) findViewById(R.id.response_text_view);
-/ If no user is signed in, stay on the current login/sign-up activity.
+
+        // If no user is signed in, stay on the current login/sign-up activity.
+
         // Check if user is signed in (non-null) and update UI accordingly.
+
         user = auth.getCurrent
+
         // Initialize the buttons
+
         Button tokenBtn = (Button) findViewById(R.id.token_btn);
         Button codeBtn = (Button) findViewById(R.id.code_btn);
         Button profileBtn = (Button) findViewById(R.id.profile_btn);
