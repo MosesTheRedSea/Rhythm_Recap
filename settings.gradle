@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "RhythmRecap"
 include ':app'
+include ':spotifysample'
+include ':spotify'
