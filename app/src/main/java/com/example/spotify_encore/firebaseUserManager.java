@@ -1,6 +1,7 @@
 package com.example.spotify_encore;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,9 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.spotify.sdk.android.auth.AuthorizationClient;
+import com.spotify.sdk.android.auth.AuthorizationRequest;
+import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +26,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -29,6 +34,15 @@ import okhttp3.Response;
 // As well as overall App Management
 
 public class firebaseUserManager extends AppCompatActivity {
+    public static final String CLIENT_ID = "edd6322503f640c1a8514e901e175453";
+    public static final String REDIRECT_URI = "com.example.spotifyencore://auth";
+
+    public static final int AUTH_TOKEN_REQUEST_CODE = 0;
+    public static final int AUTH_CODE_REQUEST_CODE = 1;
+
+    private final OkHttpClient mOkHttpClient = new OkHttpClient();
+    private String mAccessToken, mAccessCode;
+    private Call mCall;
     private ImageView profileImageView;
     private TextView userNameProfile;
     private TextView userLocationProfile;
@@ -178,9 +192,24 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
 
- 
 
 
+    public void getToken() {
+        final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
+        AuthorizationClient.openLoginActivity(firebaseUserManager.this, AUTH_TOKEN_REQUEST_CODE, request);
+    }
+
+    private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
+        return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
+                .setShowDialog(false)
+                .setScopes(new String[] { "user-read-email" }) // <--- Change the scope of your requested token here
+                .setCampaign("your-campaign-token")
+                .build();
+    }
+
+    private Uri getRedirectUri() {
+        return Uri.parse(REDIRECT_URI);
+    }
 
 
 }
