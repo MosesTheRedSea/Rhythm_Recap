@@ -98,6 +98,7 @@
                         android:background="@drawable/profile_actions_background"
                         android:textAlignment="center"
                         android:text="Home"
+                        android:onClick="backToHomePage"
                          />
 
                     <androidx.appcompat.widget.AppCompatButton
