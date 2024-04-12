@@ -62,22 +62,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.347" />
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="208dp"
-        android:text="New Username "
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.668" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/changePass"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -85,12 +72,14 @@
         android:text="New Password "
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintHorizontal_bias="0.477"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.762" />
+        app:layout_constraintVertical_bias="0.741" />
+
 
     <EditText
+        android:id="@+id/changeEmail"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -98,14 +87,13 @@
         android:text="New Email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.572" />
-
+        app:layout_constraintVertical_bias="0.606" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/DeleteAccountAccountSettings"
+        android:id="@+id/deleteAccountSettings"
         style="@android:style/Widget.Button"
         android:layout_width="300dp"
         android:layout_height="60dp"
@@ -122,7 +110,7 @@
         app:layout_constraintVertical_bias="0.867" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/ChangeInfoAccountSettings"
+        android:id="@+id/changeInfoAccountSettings"
         style="@android:style/Widget.Button"
         android:layout_width="300dp"
         android:layout_height="60dp"

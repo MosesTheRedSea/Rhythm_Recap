@@ -42,21 +42,15 @@ import android.widget.ImageView;
 // This class interacts with Firebase Authentication to perform login, signup, logout, etc.
 // Initializes Firebase in your application. This could be part of MyApplication or a separate class.
 public class applicationCore extends AppCompatActivity {
-
     public static final String CLIENT_ID = "edd6322503f640c1a8514e901e175453";
     public static final String REDIRECT_URI = "com.example.spotifyencore://auth";
-
     public static final int AUTH_TOKEN_REQUEST_CODE = 0;
     public static final int AUTH_CODE_REQUEST_CODE = 1;
-
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String mAccessToken, mAccessCode;
     private Call mCall;
-
     private TextView tokenTextView, codeTextView, profileTextView;
-
     private static final int SPLASH_SCREEN_TIMEOUT = 3000;
-
     FirebaseAuth auth;
     FirebaseUser user;
 
@@ -107,8 +101,6 @@ public class applicationCore extends AppCompatActivity {
         Intent sign = new Intent(this, login.class);
         startActivity(sign);
     }
-
-
 
 
     /**

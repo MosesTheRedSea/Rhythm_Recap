@@ -1,18 +1,23 @@
 package com.example.spotify_encore;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import com.google.android.gms.tasks.OnCompleteListener;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.spotify.sdk.android.auth.AuthorizationClient;
@@ -52,9 +57,13 @@ public class firebaseUserManager extends AppCompatActivity {
     private AppCompatButton friendsButton;
     private Button AccountSettingsButton;
 
-
+    private EditText changeUserEmail;
+    private EditText changePassword;
     FirebaseAuth auth;
     AppCompatButton signOut;
+
+    AppCompatButton changeInfo;
+    AppCompatButton deleteAccount;
     FirebaseUser user;
 
 
@@ -76,10 +85,42 @@ public class firebaseUserManager extends AppCompatActivity {
         String action = getIntent().getStringExtra("userAction");
 
         if (action != null) {
+
             if (action.equals("accountSettings")) {
+
                 setContentView(R.layout.account_setting);
 
                 signOut = findViewById(R.id.signOutAccountSettings);
+                deleteAccount = findViewById(R.id.deleteAccountSettings);
+                changeInfo = findViewById(R.id.changeInfoAccountSettings);
+
+                changeUserEmail = findViewById(R.id.changeEmail);
+                changePassword = findViewById(R.id.changePass);
+
+
+                changeInfo.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onClick(View v) {
+                        String email, password;
+
+                        email = changeUserEmail.getText().toString();
+                        password = changePassword.getText().toString();
+
+                        updateUserInfo(email, password);
+
+                        changeUserEmail.setText("New Email");
+                        changePassword.setText("New Password");
+                    }
+                });
+                deleteAccount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteUserAccount();
+                    }
+
+                });
+
                 signOut.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -104,8 +145,50 @@ public class firebaseUserManager extends AppCompatActivity {
         startActivity(sign);
     }
 
+    public void updateUserInfo(String email, String password) {
+
+        if (!email.isEmpty()) {
+            user.updateEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("firebaseUserManager", "User email address updated.");
+                            }
+                        }
+                    });
+        }
+
+        if (!password.isEmpty()) {
+            user.updatePassword(password)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("firebaseUserManager", "User password updated.");
+                            }
+                        }
+                    });
+        }
+
+    }
+
+    public void deleteUserAccount() {
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("firebaseUserManager", "User account deleted.");
+                        }
+                    }
+                });
+    }
+
     public void userSignOut() {
+
         auth.signOut();
+
         Intent intent = new Intent(getApplicationContext(), authentication.class);
         intent.putExtra("userAction", "LogIn");
         startActivity(intent);

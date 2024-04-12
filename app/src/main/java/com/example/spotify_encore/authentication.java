@@ -81,13 +81,20 @@ public class authentication extends AppCompatActivity {
     // When initializing your Activity, check to see if the user is currently signed in
     @Override
     public void onStart() {
+
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+
+        if(currentUser != null) {
+
             Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+
             intent.putExtra("userAction", "homepage");
+
             startActivity(intent);
+
             finish();
         }
     }
@@ -112,7 +119,6 @@ public class authentication extends AppCompatActivity {
             setContentView(R.layout.login);
 
             loginAccountButton = findViewById(R.id.login_button);
-
             loginAccountButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
