@@ -6,13 +6,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +45,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -51,6 +56,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,6 +114,14 @@ public class firebaseUserManager extends AppCompatActivity {
     ListView userReccomendation;
     reccomendationAdapter adapter;
     List<String> recommendedTracks;
+    ArrayAdapter<String> adapter2;
+    AppCompatButton exportButton;
+    AppCompatButton sumGoHome;
+
+    TextView topTrackText;
+    TextView topArtistText;
+    Spinner spotifySum;
+
 
 
 
@@ -356,8 +373,67 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
+
                 } else if (action.equals("create_summary")) {
                     setContentView(R.layout.create_summary);
+
+                    spotifySum = findViewById(R.id.summarSelect);
+                    topTrackText = findViewById(R.id.topTrackTextT);
+                    topArtistText = findViewById(R.id.topArtistTextT);
+
+                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sort_options, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spotifySum.setAdapter(adapter);
+
+                    spotifySum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            String selectedOption = parent.getItemAtPosition(position).toString();
+
+                            switch (selectedOption) {
+                                case "1 Week":
+                                    retrieveSpotifyAccessTokenAndGetTopTrackArtist("short_term");
+                                    getTopArtists("short_term");
+                                    break;
+                                case "1 Month":
+                                    retrieveSpotifyAccessTokenAndGetTopTrackArtist("medium_term");
+
+                                    getTopArtists("medium_term");
+                                    break;
+                                case "1 Year":
+                                    retrieveSpotifyAccessTokenAndGetTopTrackArtist("long_term");
+
+                                    getTopArtists("long_term");
+                                    break;
+                                case "All Time":
+                                    retrieveSpotifyAccessTokenAndGetTopTrackArtist("all_time");
+                                    getTopArtists("all_time");
+                                    break;
+                                default:
+                                    // Handle default case or do nothing
+                                    break;
+                            }
+
+                        }
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                            // Do nothing
+                        }
+                    });
+
+                    exportButton = findViewById(R.id.exportButton);
+
+                    sumGoHome = findViewById(R.id.sumHomeButt);
+                    sumGoHome.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+                            intent.putExtra("userAction", "homepage");
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+
                 }
             }
         }
@@ -515,6 +591,72 @@ public class firebaseUserManager extends AppCompatActivity {
         ─▀▀▀▄▄ █──█ █──█ ──█── ▀█▀ █▀▀ █▄▄█ 　 ░█▄▄█ ░█▄▄█ ░█─
         ░█▄▄▄█ █▀▀▀ ▀▀▀▀ ──▀── ▀▀▀ ▀── ▄▄▄█ 　 ░█─░█ ░█─── ▄█▄
      */
+
+    private void getTopTrack(String spotifyAccessToken, String timeline) {
+        OkHttpClient client = new OkHttpClient();
+
+        // Construct the URL for the top tracks endpoint
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
+        urlBuilder.addQueryParameter("limit", "1"); // Include limit parameter to get only one track
+        urlBuilder.addQueryParameter("time_range", timeline); // Example time range
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                .get() // Specify that this is a GET request
+                .build();
+
+        // Send the request asynchronously
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                e.printStackTrace();
+                // Handle request failure
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                try {
+                    // Parse response JSON
+                    String responseData = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONArray tracks = jsonResponse.getJSONArray("items");
+
+                    if (tracks.length() > 0) {
+                        // Get the first track from the list
+                        JSONObject firstTrack = tracks.getJSONObject(0);
+                        String trackName = firstTrack.getString("name");
+                        JSONArray artists = firstTrack.getJSONArray("artists");
+                        String artistName = artists.getJSONObject(0).getString("name");
+
+                        // Update UI with the top track information
+                        String topTrackInfo = "Top Track: " + trackName + " - " + artistName;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                topTrackText.setText(topTrackInfo);
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Handle JSON parsing error
+                }
+            }
+        });
+    }
+
+    private void getTopArtists(String timeRange) {
+        // Make Spotify API call to get user's top artists based on the specified time range
+        // Example:
+        // Call<Artists> call = spotifyService.getTopArtists(timeRange);
+        // Handle the API response asynchronously
+    }
+
 
     // Method to make a recommendation request to the Spotify API
     public void makeApiRequest(String accessToken) throws IOException {
@@ -678,6 +820,38 @@ public class firebaseUserManager extends AppCompatActivity {
                     // Use the retrieved Spotify access token to make the recommendation request
                     makeRecommendationRequest(spotifyAccessToken);
                     Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Reccomendation", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle the case where no Spotify access token was found
+                    Toast.makeText(firebaseUserManager.this, "No Spotify access token found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void retrieveSpotifyAccessTokenAndGetTopTrackArtist(String timeline) {
+        retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
+            @Override
+            public void onTokenRetrieved(String spotifyAccessToken) {
+                if (spotifyAccessToken != null) {
+                    // Use the retrieved Spotify access token to make the getTopTracks API call
+                    getTopTrack(spotifyAccessToken, timeline);
+                    Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Tracks", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle the case where no Spotify access token was found
+                    Toast.makeText(firebaseUserManager.this, "No Spotify access token found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void retrieveSpotifyAccessTokenAndGetTopArtist(String timeline) {
+        retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
+            @Override
+            public void onTokenRetrieved(String spotifyAccessToken) {
+                if (spotifyAccessToken != null) {
+                    // Use the retrieved Spotify access token to make the getTopArtist API call
+                    getTopArtists(spotifyAccessToken, timeline);
+                    Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Artist", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
                     Toast.makeText(firebaseUserManager.this, "No Spotify access token found", Toast.LENGTH_SHORT).show();

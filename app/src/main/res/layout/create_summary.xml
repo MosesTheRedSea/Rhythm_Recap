@@ -7,8 +7,6 @@
 
 
     <ImageView
-
-
         android:id="@+id/imageView"
         android:layout_width="458dp"
         android:layout_height="764dp"
@@ -20,22 +18,6 @@
         app:layout_constraintVertical_bias="0.515"
         app:srcCompat="@drawable/plain_background" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/oneYearButton"
-        style="@android:style/Widget.Button"
-        android:layout_width="164dp"
-        android:layout_height="59dp"
-        android:background="@drawable/profile_actions_background"
-        android:text="1 Year"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.909" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -56,7 +38,7 @@
         android:id="@+id/textSummary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Summary"
+        android:text="Summary"
         android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -67,74 +49,112 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="326dp"
-        android:layout_height="589dp"
+
+    <TextView
+        android:id="@+id/topArtist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top Artist"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.229"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.34" />
 
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/oneMonthButton"
-        style="@android:style/Widget.Button"
-        android:layout_width="164dp"
-        android:layout_height="59dp"
-        android:background="@drawable/profile_actions_background"
-        android:text="1 Month"
-        android:textAlignment="center"
-        android:textSize="18sp"
+    <TextView
+        android:id="@+id/topArtistTextT"
+        android:layout_width="405dp"
+        android:layout_height="63dp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.997" />
+        app:layout_constraintVertical_bias="0.444" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/oneWeekButton"
-        style="@android:style/Widget.Button"
-        android:layout_width="164dp"
-        android:layout_height="59dp"
-        android:background="@drawable/profile_actions_background"
-        android:text="1 Week"
-        android:textAlignment="center"
-        android:textSize="18sp"
+    <TextView
+        android:id="@+id/TopTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top Track"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.598" />
+
+    <TextView
+        android:id="@+id/topTrackTextT"
+        android:layout_width="405dp"
+        android:layout_height="63dp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.909" />
+        app:layout_constraintVertical_bias="0.709" />
+
+    <Spinner
+        android:id="@+id/summarSelect"
+        android:layout_width="149dp"
+        android:layout_height="46dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.956" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/allTimeButton"
+        android:id="@+id/sumHomeButt"
         style="@android:style/Widget.Button"
-        android:layout_width="164dp"
-        android:layout_height="59dp"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:background="@drawable/profile_actions_background"
-        android:text="All Time"
+        android:onClick="backToHomePage"
+        android:text="Home"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.674"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.997" />
+        app:layout_constraintVertical_bias="0.955" />
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="255dp"
-        android:layout_height="247dp"
-        tools:layout_editor_absoluteX="87dp"
-        tools:layout_editor_absoluteY="191dp" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/exportButton"
+        style="@android:style/Widget.Button"
+        android:layout_width="63dp"
+        android:layout_height="52dp"
+        android:background="@drawable/profile_actions_background"
+        android:onClick="backToHomePage"
+        android:text="S"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.956"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.955" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
