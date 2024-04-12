@@ -69,13 +69,7 @@ public class firebaseUserManager extends AppCompatActivity {
                 signOut.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        auth.signOut();
-
-                        Intent intent = new Intent(getApplicationContext(), authentication.class);
-                        intent.putExtra("userAction", "LogIn");
-                        startActivity(intent);
-                        finish();
+                        userSignOut();
                     }
                 });
 
@@ -94,6 +88,14 @@ public class firebaseUserManager extends AppCompatActivity {
         String authentication = "accountSettings";
         sign.putExtra("userAction", authentication);
         startActivity(sign);
+    }
+
+    public void userSignOut() {
+        auth.signOut();
+        Intent intent = new Intent(getApplicationContext(), authentication.class);
+        intent.putExtra("userAction", "LogIn");
+        startActivity(intent);
+        finish();
     }
 
     /**
