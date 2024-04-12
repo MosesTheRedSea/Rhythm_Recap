@@ -239,6 +239,7 @@ public class firebaseUserManager extends AppCompatActivity {
                             // Redirect to application core activity
                             Intent sign = new Intent(getApplicationContext(), applicationCore.class);
                             startActivity(sign);
+                            finish();
                         }
                     });
 
@@ -253,6 +254,7 @@ public class firebaseUserManager extends AppCompatActivity {
                             String authentication = "login";
                             sign.putExtra("userAction", authentication);
                             startActivity(sign);
+                            finish();
                         }
                     });
                 } else if (action.equals("homepage")) {
@@ -320,12 +322,12 @@ public class firebaseUserManager extends AppCompatActivity {
                     generateReccomendation = findViewById(R.id.generateReccoButton);
 
                     userReccomendation = findViewById(R.id.recommendationsListView);
-                    List<String> testData = Arrays.asList("Track 1", "Track 2", "Track 3");
+
+                    List<String> testData = new ArrayList<>();
                     adapter = new reccomendationAdapter(testData, this);
-
                     userReccomendation.setAdapter(adapter);
-
                     adapter.setRecommendedTracks(testData); // Notify the adapter that the dataset has changed
+                    adapter.notifyDataSetChanged();
 
                     generateReccomendation.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -347,8 +349,6 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
-
-
     /*
     ░█▀▀█ ░█─░█ ▀▀█▀▀ ▀▀█▀▀ ░█▀▀▀█ ░█▄─░█ 　 ░█▀▀█ ░█─── ▀█▀ ░█▀▀█ ░█─▄▀ ░█▀▀▀█
     ░█▀▀▄ ░█─░█ ─░█── ─░█── ░█──░█ ░█░█░█ 　 ░█─── ░█─── ░█─ ░█─── ░█▀▄─ ─▀▀▀▄▄
@@ -360,6 +360,7 @@ public class firebaseUserManager extends AppCompatActivity {
         String authentication = "profile";
         sign.putExtra("userAction", authentication);
         startActivity(sign);
+        finish();
     }
 
     public void accountSettingsClick(View view) {
@@ -367,6 +368,7 @@ public class firebaseUserManager extends AppCompatActivity {
         String authentication = "accountSettings";
         sett.putExtra("userAction", authentication);
         startActivity(sett);
+        finish();
     }
 
     public void backToHomePage(View view) {
@@ -374,6 +376,7 @@ public class firebaseUserManager extends AppCompatActivity {
         String authentication = "homepage";
         sign.putExtra("userAction", authentication);
         startActivity(sign);
+        finish();
     }
 
 
@@ -548,11 +551,13 @@ public class firebaseUserManager extends AppCompatActivity {
                     throw new IOException("Unexpected code " + response);
                 }
 
-                Toast.makeText(firebaseUserManager.this, "Received Recommendation", Toast.LENGTH_SHORT).show();
 
                 try {
                     // Parse response JSON
                     String responseData = response.body().string();
+
+                    System.out.println(responseData);
+
                     List<String> recommendedTracks = parseRecommendations(responseData);
 
                     // Update UI with recommended tracks
@@ -561,7 +566,7 @@ public class firebaseUserManager extends AppCompatActivity {
                         public void run() {
                             if (adapter != null) {
                                 adapter.setRecommendedTracks(recommendedTracks); // Update the dataset with recommended tracks
-                                adapter.notifyDataSetChanged(); // Notify the adapter that the dataset has changed
+                                adapter.notifyDataSetChanged();
                             } else {
                                 // If adapter is null, initialize it with the recommended tracks
                                 adapter = new reccomendationAdapter(recommendedTracks, getApplicationContext()); // Pass recommended tracks to the constructor of your adapter
