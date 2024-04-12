@@ -682,7 +682,156 @@ public class firebaseUserManager extends AppCompatActivity {
         AuthorizationClient.openLoginActivity(firebaseUserManager.this, AUTH_TOKEN_REQUEST_CODE, request);
     }
 
+    public void onGetUserProfileClicked() {
+        // Retrieve the Spotify access token from Firebase
+        retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
+            @Override
+            public void onTokenRetrieved(String spotifyAccessToken) {
+                if (spotifyAccessToken != null) {
+                    // Use the Spotify access token retrieved from Firebase
 
+                    // Update the URL to fetch the user's profile information
+                    final Request request = new Request.Builder()
+                            .url("https://api.spotify.com/v1/me")
+                            .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                            .build();
+
+                    cancelCall();
+                    mCall = mOkHttpClient.newCall(request);
+
+                    mCall.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.d("HTTP", "Failed to fetch data: " + e);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(firebaseUserManager.this, "Failed to fetch data, watch Logcat for more details",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            try {
+                                final JSONObject jsonObject = new JSONObject(response.body().string());
+
+                                // Extract user profile information from the JSON response
+                                String displayName = jsonObject.optString("display_name", "Not provided");
+                                String email = jsonObject.optString("email", "Not provided");
+                                String country = jsonObject.optString("country", "Not provided");
+                                String birthdate = jsonObject.optString("birthdate", "Not provided");
+                                int followersCount = jsonObject.optInt("followers", 0);
+                                String followers = "Followers: " + followersCount;
+                                String product = jsonObject.optString("product", "Not provided");
+                                String spotifyId = jsonObject.optString("id", "Not provided");
+                                String uri = jsonObject.optString("uri", "Not provided");
+                                String userType = jsonObject.optString("type", "Not provided");
+                                String birthplace = jsonObject.optString("birthplace", "Not provided");
+                                String spotifyUrl = jsonObject.optString("external_urls.spotify", "Not provided");
+
+                                final String userProfileInfo = "Display Name: " + displayName +
+                                        "\nEmail: " + email +
+                                        "\nCountry: " + country +
+                                        "\nBirthdate: " + birthdate +
+                                        "\n" + followers +
+                                        "\nProduct: " + product +
+                                        "\nSpotify ID: " + spotifyId +
+                                        "\nURI: " + uri +
+                                        "\nUser Type: " + userType +
+                                        "\nBirthplace: " + birthplace +
+                                        "\nSpotify URL: " + spotifyUrl;
+
+                                // Update UI on the main thread
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Display the user profile information
+                                        userSpotifyInfo.setText(userProfileInfo);
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                Log.d("JSON", "Failed to parse data: " + e);
+                                Toast.makeText(firebaseUserManager.this, "Failed to parse data, watch Logcat for more details",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    // Handle the case where no Spotify access token was found
+                    Toast.makeText(firebaseUserManager.this, "No Spotify access token found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    // This code comment does not work
+    /*
+    public void onGetUserProfileClicked() {
+        // Retrieve the Spotify access token from Firebase
+        retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
+            @Override
+            public void onTokenRetrieved(String spotifyAccessToken) {
+                if (spotifyAccessToken != null) {
+                    // Use the Spotify access token retrieved from Firebase
+
+                    // Update the URL to fetch other personal user information
+                    final Request request = new Request.Builder()
+                            .url("https://api.example.com/v1/user/info") // Change the URL to the endpoint for fetching other personal user information
+                            .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                            .build();
+
+                    cancelCall();
+                    mCall = mOkHttpClient.newCall(request);
+
+                    mCall.enqueue(new Callback() {
+                        public void onFailure(Call call, IOException e) {
+                            Log.d("HTTP", "Failed to fetch data: " + e);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(firebaseUserManager.this, "Failed to fetch data, watch Logcat for more details",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            try {
+                                final JSONObject jsonObject = new JSONObject(response.body().string());
+                                final String userInfo = jsonObject.toString(3); // Adjust parsing according to the response structure
+
+                                // Update UI on the main thread
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Display the user information in the appropriate view
+                                        userSpotifyInfo.setText(userInfo); // Change to the appropriate TextView
+                                        System.out.println(userInfo);
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                Log.d("JSON", "Failed to parse data: " + e);
+                                Toast.makeText(firebaseUserManager.this, "Failed to parse data, watch Logcat for more details",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    // Handle the case where no Spotify access token was found
+                    Toast.makeText(firebaseUserManager.this, "No Spotify access token found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+     */
+
+
+    // This Code Comment Works
+    /*
     public void onGetUserProfileClicked() {
         // Retrieve the Spotify access token from Firebase
         retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
@@ -736,6 +885,8 @@ public class firebaseUserManager extends AppCompatActivity {
             }
         });
     }
+
+     */
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
