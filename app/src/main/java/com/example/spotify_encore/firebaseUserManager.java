@@ -393,21 +393,21 @@ public class firebaseUserManager extends AppCompatActivity {
                             switch (selectedOption) {
                                 case "1 Week":
                                     retrieveSpotifyAccessTokenAndGetTopTrackArtist("short_term");
-                                    getTopArtists("short_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("short_term");
+
                                     break;
                                 case "1 Month":
                                     retrieveSpotifyAccessTokenAndGetTopTrackArtist("medium_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("medium_term");
 
-                                    getTopArtists("medium_term");
                                     break;
                                 case "1 Year":
                                     retrieveSpotifyAccessTokenAndGetTopTrackArtist("long_term");
-
-                                    getTopArtists("long_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("long_term");
                                     break;
                                 case "All Time":
                                     retrieveSpotifyAccessTokenAndGetTopTrackArtist("all_time");
-                                    getTopArtists("all_time");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("all_time");
                                     break;
                                 default:
                                     // Handle default case or do nothing
@@ -650,11 +650,60 @@ public class firebaseUserManager extends AppCompatActivity {
         });
     }
 
-    private void getTopArtists(String timeRange) {
-        // Make Spotify API call to get user's top artists based on the specified time range
-        // Example:
-        // Call<Artists> call = spotifyService.getTopArtists(timeRange);
-        // Handle the API response asynchronously
+    private void getTopArtist(String spotifyAccessToken, String timeline) {
+        OkHttpClient client = new OkHttpClient();
+
+        // Construct the URL for the top artists endpoint
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/artists").newBuilder();
+        urlBuilder.addQueryParameter("limit", "1"); // Include limit parameter to get only one artist
+        urlBuilder.addQueryParameter("time_range", timeline); // Example time range
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                .get() // Specify that this is a GET request
+                .build();
+
+        // Send the request asynchronously
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                e.printStackTrace();
+                // Handle request failure
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                try {
+                    // Parse response JSON
+                    String responseData = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONArray artists = jsonResponse.getJSONArray("items");
+
+                    if (artists.length() > 0) {
+                        // Get the first artist from the list
+                        JSONObject firstArtist = artists.getJSONObject(0);
+                        String artistName = firstArtist.getString("name");
+
+                        // Update UI with the top artist information
+                        String topArtistInfo = "Top Artist: " + artistName;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                topArtistText.setText(topArtistInfo);
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Handle JSON parsing error
+                }
+            }
+        });
     }
 
 
@@ -850,7 +899,7 @@ public class firebaseUserManager extends AppCompatActivity {
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the retrieved Spotify access token to make the getTopArtist API call
-                    getTopArtists(spotifyAccessToken, timeline);
+                    getTopArtist(spotifyAccessToken, timeline);
                     Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Artist", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
