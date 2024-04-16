@@ -41,7 +41,8 @@
 
             <intent-filter>
 
-                <data android:host="auth" android:scheme="com.example.spotifyencore" />
+                <data android:host="auth"
+                    android:scheme="com.example.spotiifyencore" />
             </intent-filter>
         </activity>
 

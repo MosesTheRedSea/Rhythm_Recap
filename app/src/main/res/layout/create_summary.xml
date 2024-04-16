@@ -18,6 +18,35 @@
         app:layout_constraintVertical_bias="0.515"
         app:srcCompat="@drawable/plain_background" />
 
+    <TextView
+        android:id="@+id/topArtistTextT"
+        android:layout_width="405dp"
+        android:layout_height="63dp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.444" />
+
+    <TextView
+        android:id="@+id/topTrackTextT"
+        android:layout_width="405dp"
+        android:layout_height="63dp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.709" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -65,21 +94,6 @@
         app:layout_constraintVertical_bias="0.34" />
 
     <TextView
-        android:id="@+id/topArtistTextT"
-        android:layout_width="405dp"
-        android:layout_height="63dp"
-        android:text=""
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.444" />
-
-    <TextView
         android:id="@+id/TopTrack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -92,21 +106,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.598" />
-
-    <TextView
-        android:id="@+id/topTrackTextT"
-        android:layout_width="405dp"
-        android:layout_height="63dp"
-        android:text=""
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.709" />
 
     <Spinner
         android:id="@+id/summarSelect"
@@ -137,6 +136,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.955" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/generateSummary"
+        style="@android:style/Widget.Button"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:background="@drawable/profile_actions_background"
+        android:text="Generate"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.674"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.863" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/exportButton"
