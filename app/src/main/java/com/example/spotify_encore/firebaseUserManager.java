@@ -2,8 +2,15 @@ package com.example.spotify_encore;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.Manifest;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 
@@ -46,6 +54,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -171,6 +181,7 @@ public class firebaseUserManager extends AppCompatActivity {
     TextView topArtistText;
     Spinner spotifySum;
 
+
     Button  generateWrap, gettoken;
     Button friendButton;
     FirebaseAuth mAuth;
@@ -188,13 +199,8 @@ public class firebaseUserManager extends AppCompatActivity {
     private CustomAdapter cadapter;
 
 
-
-
-
-
-
-
     // These are only outline methods they can be changed if needed
+    @SuppressLint("CutPasteId")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -310,6 +316,10 @@ public class firebaseUserManager extends AppCompatActivity {
                             changePassword.setText("New Password");
                         }
                     });
+
+
+
+
 
                     // Set click listener for connecting Spotify
                     connectSpotify.setOnClickListener((v) -> {
@@ -584,8 +594,6 @@ public class firebaseUserManager extends AppCompatActivity {
                     gettoken.setOnClickListener((v) -> {
                         getAccessToken();
                     });
-
-
 
 
                     sumGoHome.setOnClickListener(new View.OnClickListener() {
@@ -1793,4 +1801,62 @@ public class firebaseUserManager extends AppCompatActivity {
         startActivity(sett);
         finish();
     }
+
+    public Bitmap getBitmapFromView(View view) {
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        Drawable bgDrawable = view.getBackground();
+        if (bgDrawable != null) {
+            bgDrawable.draw(canvas);
+        } else {
+            canvas.drawColor(Color.WHITE);
+        }
+        view.draw(canvas);
+        return returnedBitmap;
+    }
+
+
+    public void saveBitmap(Bitmap bitmap, String filename) {
+        File imagePath = new File(Environment.getExternalStorageDirectory() + "/Download/" + filename + ".png");
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(imagePath);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+            Log.i("ImageSave", "Image saved to " + imagePath.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted
+        } else {
+            // Permission denied
+        }
+    }
+
+
+
+
+
+
+
+
+
 }
