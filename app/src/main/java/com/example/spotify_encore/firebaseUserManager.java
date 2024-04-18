@@ -608,21 +608,66 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
+    private void onClick(View v) {
+        // Initiate the API call
+        getWrapData(mAccessToken);
+    }
+
+    private void getWrapData(String Token) {
+        if (Token == null) {
+            Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Log.d("User Token", Token);
+
+        Request request = new Request.Builder()
+                .url("https://api.spotify.com/v1/me/player/recently-played")
+                .addHeader("Authorization", "Bearer " + Token)
+                .build();
+
+        cancelCall();
+        mCall = mOkHttpClient.newCall(request);
+
+        mCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("HTTP", "Failed to fetch data: " + e);
+                // Handle failure (e.g., show an error message)
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responseBody = response.body().string();
+                    // Parse the JSON response and process the data
+                    Log.d("API Call",responseBody);
+
+                } catch (IOException e) {
+                    Log.d("HTTP", "Failed to process response: " + e);
+                    // Handle failure (e.g., show an error message)
+                }
+            }
+        });
+    }
+
     /*
     ───░█ ░█▀▀█ █▀▀█ █▀▀▄ █▀▀
     ─▄─░█ ░█─── █──█ █──█ █▀▀
     ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
      */
 
-
+    /*
     private String[][] getWrapData(String Token) throws IOException, InterruptedException {
         String[][] stuff = new String[2][5];
         int count = 0;
+
+        Log.d("User_Token", Token);
 
         if (Token == null) {
             Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
             return null;
         }
+
         // Create a request to get the user profile
         Request request = new Request.Builder()
                 .url("https://api.spotify.com/v1/me/player/recently-played")
@@ -632,7 +677,6 @@ public class firebaseUserManager extends AppCompatActivity {
         mCall = mOkHttpClient.newCall(request);
 
         Run(mCall);
-
 
         while(waiting()) {
             continue;
@@ -644,8 +688,6 @@ public class firebaseUserManager extends AppCompatActivity {
         }
 
         HashSet<String> IDs = new HashSet<String>(Arrays.asList(data));
-
-
         data = null;
 
         for (String ID : IDs) {
@@ -659,19 +701,16 @@ public class firebaseUserManager extends AppCompatActivity {
             Run(mCall);
 
             //Log.d("data", Arrays.toString(data));
-
             if (Arrays.toString(data).contains("error")) {
                 continue;
             }
 
             if (count < 5 && stuff[0][count] == null) {
                 String[] songData = Arrays.toString(data).split("\"name\": \"");
-
                 //stuff[0][count] = songData[songData.length - 1].split("\"",2)[0];
                 //stuff[1][count] = songData[songData.length - 2].split("\"",2)[0];
                 //stuff[2][count] = Arrays.toString(data).split("\"preview_url\": \"")[1].split("\"",2)[0];
                 count++;
-
                 if (count == 5) {
                     return stuff;
                 }
@@ -680,8 +719,6 @@ public class firebaseUserManager extends AppCompatActivity {
         Log.d("WWWWWWWWWW", "songs retreived");
         return stuff;
     }
-
-
 
     private void Run(Call mCall) throws IOException {
         mCall.enqueue(new Callback() {
@@ -707,9 +744,9 @@ public class firebaseUserManager extends AppCompatActivity {
     private boolean waiting() {
         return data == null;
     }
+     */
 
     /*
-
     private String[][] getWrapData(String Token) throws IOException, InterruptedException {
         String[][] stuff = new String[3][5];
         int count = 0;
@@ -854,7 +891,7 @@ public class firebaseUserManager extends AppCompatActivity {
         ░█▄▄▄ ░█──▀█ ░█▄▄▀ ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
      */
 
-
+    /*
     private void ongeneratewrap(){
         try {
             wrap = getWrapData(mAccessToken);
@@ -865,16 +902,12 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
-
-
     private void onClick(View v) {
         ongeneratewrap();
         cadapter = new CustomAdapter(this, wrap);
         listView.setAdapter(adapter);
     }
-
-
-
+     */
 
     /*
     ░█▀▀█ ░█─░█ ▀▀█▀▀ ▀▀█▀▀ ░█▀▀▀█ ░█▄─░█ 　 ░█▀▀█ ░█─── ▀█▀ ░█▀▀█ ░█─▄▀ ░█▀▀▀█
@@ -905,8 +938,6 @@ public class firebaseUserManager extends AppCompatActivity {
         startActivity(sign);
         finish();
     }
-
-
     /*
     ░█▀▀▀ ░█▀▀▄ ▀█▀ ▀▀█▀▀ 　 ░█─░█ ░█▀▀▀█ ░█▀▀▀ ░█▀▀█ 　 ▀█▀ ░█▄─░█ ░█▀▀▀ ░█▀▀▀█
     ░█▀▀▀ ░█─░█ ░█─ ─░█── 　 ░█─░█ ─▀▀▀▄▄ ░█▀▀▀ ░█▄▄▀ 　 ░█─ ░█░█░█ ░█▀▀▀ ░█──░█
@@ -971,9 +1002,7 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
     public void userSignOut() {
-
         auth.signOut();
-
         Intent intent = new Intent(getApplicationContext(), authentication.class);
         intent.putExtra("userAction", "LogIn");
         startActivity(intent);
@@ -1154,8 +1183,6 @@ public class firebaseUserManager extends AppCompatActivity {
     }
     */
 
-
-
     private void getTopArtist(String spotifyAccessToken) {
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/artists").newBuilder();
@@ -1283,26 +1310,7 @@ public class firebaseUserManager extends AppCompatActivity {
     }
      */
 
-
-    // Method to make a recommendation request to the Spotify API
-    public void makeApiRequest(String accessToken) throws IOException {
-        // Example API request to get user's profile information
-        Request request = new Request.Builder()
-                .url(REDIRECT_URI + "/me")
-                .header("Authorization", "Bearer " + accessToken)
-                .build();
-
-        Response response = mOkHttpClient.newCall(request).execute();
-        if (response.isSuccessful()) {
-            String responseData = response.body().string();
-            System.out.println("User profile data: " + responseData);
-        } else {
-            System.out.println("Failed to fetch user profile data");
-        }
-    }
-
     private void makeRecommendationRequest(String spotifyAccessToken) {
-
         OkHttpClient client = new OkHttpClient();
 
         // Define the request to the Spotify API
@@ -1358,6 +1366,7 @@ public class firebaseUserManager extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     // Handle JSON parsing error
+
                 }
             }
         });
@@ -1365,9 +1374,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
     /*
     private void makeRecommendationRequest(String spotifyAccessToken) {
-
         OkHttpClient client = new OkHttpClient();
-
         // Define the request to the Spotify API
         Request request = new Request.Builder()
                 .url("https://api.spotify.com/v1/recommendations?limit=10&market=ES") // Include limit and market parameters
@@ -1381,21 +1388,16 @@ public class firebaseUserManager extends AppCompatActivity {
                 e.printStackTrace();
                 // Handle request failure
             }
-
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
-
-
                 Toast.makeText(firebaseUserManager.this, "Received Reccomendation", Toast.LENGTH_SHORT).show();
-
                 try {
                     // Parse response JSON
                     String responseData = response.body().string();
                     List<String> recommendedTracks = parseRecommendations(responseData);
-
                     // Update UI with recommended tracks
                     runOnUiThread(new Runnable() {
                         @Override
@@ -1424,19 +1426,17 @@ public class firebaseUserManager extends AppCompatActivity {
         List<String> recommendedTracks = new ArrayList<>();
         JSONObject jsonResponse = new JSONObject(responseData);
         JSONArray tracks = jsonResponse.getJSONArray("tracks");
-
         for (int i = 0; i < tracks.length(); i++) {
             JSONObject track = tracks.getJSONObject(i);
             String trackName = track.getString("name");
             String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
             recommendedTracks.add(trackName + " - " + artistName);
         }
-
         return recommendedTracks;
     }
 
     // Retrieve User Recommendation's based on info
-    // Update the Display witht he correct information
+    // Update the Display with the correct information
     private void retrieveSpotifyAccessTokenAndMakeRecommendation() {
         retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
             @Override
@@ -1518,7 +1518,6 @@ public class firebaseUserManager extends AppCompatActivity {
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the Spotify access token retrieved from Firebase
-
                     // Update the URL to fetch the user's profile information
                     final Request request = new Request.Builder()
                             .url("https://api.spotify.com/v1/me")
@@ -1527,7 +1526,6 @@ public class firebaseUserManager extends AppCompatActivity {
 
                     cancelCall();
                     mCall = mOkHttpClient.newCall(request);
-
                     mCall.enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
@@ -1540,12 +1538,10 @@ public class firebaseUserManager extends AppCompatActivity {
                                 }
                             });
                         }
-
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                             try {
                                 final JSONObject jsonObject = new JSONObject(response.body().string());
-
                                 // Extract user profile information from the JSON response
                                 String displayName = jsonObject.optString("display_name", "Not provided");
                                 String email = jsonObject.optString("email", "Not provided");
@@ -1559,7 +1555,6 @@ public class firebaseUserManager extends AppCompatActivity {
                                 String userType = jsonObject.optString("type", "Not provided");
                                 String birthplace = jsonObject.optString("birthplace", "Not provided");
                                 String spotifyUrl = jsonObject.optString("external_urls.spotify", "Not provided");
-
                                 final String userProfileInfo = "Display Name: " + displayName +
                                         "\nEmail: " + email +
                                         "\nCountry: " + country +
@@ -1571,7 +1566,6 @@ public class firebaseUserManager extends AppCompatActivity {
                                         "\nUser Type: " + userType +
                                         "\nBirthplace: " + birthplace +
                                         "\nSpotify URL: " + spotifyUrl;
-
                                 // Update UI on the main thread
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -1604,16 +1598,13 @@ public class firebaseUserManager extends AppCompatActivity {
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the Spotify access token retrieved from Firebase
-
                     // Update the URL to fetch other personal user information
                     final Request request = new Request.Builder()
                             .url("https://api.example.com/v1/user/info") // Change the URL to the endpoint for fetching other personal user information
                             .addHeader("Authorization", "Bearer " + spotifyAccessToken)
                             .build();
-
                     cancelCall();
                     mCall = mOkHttpClient.newCall(request);
-
                     mCall.enqueue(new Callback() {
                         public void onFailure(Call call, IOException e) {
                             Log.d("HTTP", "Failed to fetch data: " + e);
@@ -1625,7 +1616,6 @@ public class firebaseUserManager extends AppCompatActivity {
                                 }
                             });
                         }
-
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                             try {
@@ -1655,9 +1645,7 @@ public class firebaseUserManager extends AppCompatActivity {
             }
         });
     }
-
-     */
-
+    */
 
     // This Code Comment Works
     /*
@@ -1869,7 +1857,6 @@ public class firebaseUserManager extends AppCompatActivity {
         runOnUiThread(() -> textView.setText(text));
     }
 
-
     private void fetchUserProfile(String accessToken) {
         // Use the access token to make a request to the Spotify API to fetch user profile
         // You can use libraries like Retrofit, Volley, or OkHttp to make HTTP requests
@@ -1908,7 +1895,6 @@ public class firebaseUserManager extends AppCompatActivity {
         });
     }
 
-
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(true)
@@ -1933,8 +1919,7 @@ public class firebaseUserManager extends AppCompatActivity {
         super.onDestroy();
     }
 
-
-//SUmmary
+// Summary
 
     public void pressCreateSummary(View view) {
         Intent sett = new Intent(this, firebaseUserManager.class);
@@ -1973,7 +1958,6 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
 
-
     private void requestStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -1992,13 +1976,4 @@ public class firebaseUserManager extends AppCompatActivity {
             // Permission denied
         }
     }
-
-
-
-
-
-
-
-
-
 }

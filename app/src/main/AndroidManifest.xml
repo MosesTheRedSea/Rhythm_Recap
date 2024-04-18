@@ -48,9 +48,5 @@
                     android:scheme="com.example.spotiifyencore" />
             </intent-filter>
         </activity>
-
-
-
     </application>
-
 </manifest>
