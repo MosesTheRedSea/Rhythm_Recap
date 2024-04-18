@@ -189,7 +189,6 @@ public class firebaseUserManager extends AppCompatActivity {
     DatabaseReference reference;
     String currentUserEmail;
     String[][] wrap;
-
     Wrap wrap4song;
     ListView wrapListView;
     private MediaPlayer mediaPlayer;
@@ -562,7 +561,6 @@ public class firebaseUserManager extends AppCompatActivity {
 
                             // Assuming position starts from 0
                             if (position < 5) {
-
                                 // Check if the data is not null and the number of rows is at least 3
                                 if (wrap[2][position] != null) {
                                     // Get the song URL from the 3rd row and 0th column (assuming the URL is in the first column)
@@ -589,6 +587,7 @@ public class firebaseUserManager extends AppCompatActivity {
                         }
                     });
 
+                    // Method that makes an Onclick
                     generateWrap.setOnClickListener(this::onClick);
 
                     gettoken.setOnClickListener((v) -> {
@@ -605,136 +604,21 @@ public class firebaseUserManager extends AppCompatActivity {
                         }
                     });
 
+
+
                 }
             }
         }
-    }
-
-    private void onClick(View v) {
-        // Initiate the API call
-        getWrapData(mAccessToken);
-    }
-
-    private void getWrapData(String Token) {
-        if (Token == null) {
-            Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Request request = new Request.Builder()
-                .url("https://api.spotify.com/v1/me/player/recently-played")
-                .addHeader("Authorization", "Bearer " + Token)
-                .build();
-
-        cancelCall();
-        mCall = mOkHttpClient.newCall(request);
-
-        mCall.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("HTTP", "Failed to fetch data: " + e);
-                // Handle failure (e.g., show an error message)
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    String responseBody = response.body().string();
-                    // Parse the JSON response and process the data
-                    Log.d("RESPONSE ", responseBody);
-                    processResponseData(responseBody);
-                } catch (IOException | JSONException e) {
-                    Log.d("HTTP", "Failed to process response: " + e);
-                    // Handle failure (e.g., show an error message)
-                }
-            }
-        });
-    }
-
-    private void processResponseData(String responseBody) throws JSONException {
-        JSONObject jsonObject = new JSONObject(responseBody);
-
-        Log.d("Response Body", responseBody);
-
-        // Check if the response contains the 'items' key
-        if (!jsonObject.has("items")) {
-            Log.d("HTTP", "No 'items' key found in the response");
-            // Handle this case appropriately (e.g., show an error message)
-            return;
-        }
-
-        JSONArray itemsArray = jsonObject.getJSONArray("items");
-
-        // Create a 2D array to store track information
-        String[][] stuff = new String[3][itemsArray.length()];
-
-        // Loop through each item in the 'items' array
-        for (int i = 0; i < itemsArray.length(); i++) {
-            JSONObject item = itemsArray.getJSONObject(i);
-            JSONObject trackObject = item.getJSONObject("track");
-
-            // Extract track name
-            String trackName = trackObject.getString("name");
-            stuff[0][i] = trackName;
-
-            // Extract artist(s) information
-            JSONArray artistsArray = trackObject.getJSONArray("artists");
-            StringBuilder artistsBuilder = new StringBuilder();
-            for (int j = 0; j < artistsArray.length(); j++) {
-                JSONObject artistObject = artistsArray.getJSONObject(j);
-                String artistName = artistObject.getString("name");
-                artistsBuilder.append(artistName);
-                if (j < artistsArray.length() - 1) {
-                    artistsBuilder.append(", "); // Add comma between artists
-                }
-            }
-            String artists = artistsBuilder.toString();
-            stuff[1][i] = artists;
-
-            // Extract preview URL (if available)
-            String previewUrl = trackObject.optString("preview_url", ""); // Opt for an empty string if preview_url is null
-            stuff[2][i] = previewUrl;
-        }
-
-        // Now, the 'stuff' array contains the required track information
-        // You can use it to populate your UI or perform further processing
-
-        // Example: update UI with 'stuff' data
-        runOnUiThread(() -> {
-            cadapter = new CustomAdapter(this, stuff);
-            listView.setAdapter(adapter);
-        });
     }
 
     /*
-    private void processResponseData(String responseBody) throws JSONException {
-        JSONObject jsonObject = new JSONObject(responseBody);
-        JSONArray itemsArray = jsonObject.getJSONArray("items");
+    ───░█ ░█▀▀█ █▀▀█ █▀▀▄ █▀▀
+    ─▄─░█ ░█─── █──█ █──█ █▀▀
+    ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
+     */
 
-        // Process the items array and extract the required data
-        String[][] stuff = new String[2][5];
-        for (int i = 0; i < Math.min(itemsArray.length(), 5); i++) {
-            JSONObject item = itemsArray.getJSONObject(i);
-            JSONObject track = item.getJSONObject("track");
+    /*
 
-            // Extract relevant information from the track object
-            String name = track.getString("name");
-            String artist = track.getJSONArray("artists").getJSONObject(0).getString("name");
-            String previewUrl = track.getString("preview_url");
-
-            // Populate the stuff array
-            stuff[0][i] = name;
-            stuff[1][i] = artist;
-            stuff[2][i] = previewUrl;
-        }
-
-        // Update the UI or perform further actions with the retrieved data
-        // For example, you can update the ListView adapter here
-        runOnUiThread(() -> {
-            cadapter = new CustomAdapter(this, stuff);
-            listView.setAdapter(adapter);
-        });
-    }
      */
 
     /*
@@ -806,6 +690,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
      */
 
+    /*
     private void Run(Call mCall) throws IOException {
         mCall.enqueue(new Callback() {
             @Override
@@ -827,10 +712,152 @@ public class firebaseUserManager extends AppCompatActivity {
         return;
     }
 
+    private boolean waiting() {
+        return data == null;
+    }
+     */
+
+    private String[][] getWrapData(String Token) throws IOException, InterruptedException {
+        String[][] stuff = new String[3][5];
+        int count = 0;
+
+        if (Token == null) {
+            Toast.makeText(this, "You need to get an access token first!", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        // Create a request to get the user profile
+        Request request = new Request.Builder()
+                .url("https://api.spotify.com/v1/me/player/recently-played")
+                .addHeader("Authorization", "Bearer " + Token)
+                .build();
+        cancelCall();
+        mCall = mOkHttpClient.newCall(request);
+
+        Run(mCall);
+
+        while(waiting()) {
+            continue;
+        }
+
+        data = Arrays.toString(data).split("\"id\": \"");
+        for (int i = 0; i < data.length; i++) {
+            data[i] = data[i].split("\"", 2)[0];
+        }
+
+        HashSet<String> IDs = new HashSet<String>(Arrays.asList(data));
+
+        data = null;
+
+        for (String ID : IDs) {
+            request = new Request.Builder()
+                    .url("https://api.spotify.com/v1/tracks/" + ID)
+                    .addHeader("Authorization", "Bearer " + Token)
+                    .build();
+            cancelCall();
+            mCall = mOkHttpClient.newCall(request);
+
+            data = null;
+            Run(mCall);
+
+            while(waiting()) {
+                continue;
+            }
+            if (Arrays.toString(data).contains("error")) {
+                continue;
+            }
+
+            if (count < 5 && stuff[0][count] == null) {
+                String[] songData = Arrays.toString(data).split("\"name\": \"");
+
+                stuff[0][count] = songData[songData.length - 1].split("\"",2)[0];
+                stuff[1][count] = songData[songData.length - 2].split("\"",2)[0];
+                stuff[2][count] = Arrays.toString(data).split("\"preview_url\": \"")[1].split("\"",2)[0];
+                count++;
+
+                if (count == 5) {
+                    return stuff;
+                }
+            }
+        }
+
+        return stuff;
+    }
+
+    private void Run(Call mCall) throws IOException {
+        mCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("HTTP", "Failed to fetch data: " + e);
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    final JSONObject jsonObject = new JSONObject(response.body().string());
+
+                    data = new String[]{jsonObject.toString(0)};
+
+                } catch (JSONException e) {
+                    Log.d("JSON", "Failed to parse data: " + e);
+                }
+            }
+        });
+
+        return;
+    }
+
+    private void playMusic(String musicUrl) {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(musicUrl);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors that occur during playback
+        }
+    }
+
 
     private boolean waiting() {
         return data == null;
     }
+
+    private void onClick(View v) {
+        ongeneratewrap();
+        cadapter = new CustomAdapter(this, wrap);
+        listView.setAdapter(adapter);
+    }
+
+    private void ongeneratewrap(){
+        try {
+            Log.d("ggez","in try");
+            wrap = getWrapData(mAccessToken);
+            Log.d("testing1", wrap[0][0]);
+            Log.d("testing2", wrap[0][1]);
+            Log.d("testing3",wrap[0][2]);
+            Log.d("testing4",wrap[0][3]);
+            Log.d("testing5",wrap[0][4]);
+            Log.d("testing7",wrap[1][0]);
+            Log.d("testing8",wrap[2][0]);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
+        ░█▀▀▀ ░█▄─░█ ░█▀▀▄ ───░█ ░█▀▀█ █▀▀█ █▀▀▄ █▀▀
+        ░█▀▀▀ ░█░█░█ ░█─░█ ─▄─░█ ░█─── █──█ █──█ █▀▀
+        ░█▄▄▄ ░█──▀█ ░█▄▄▀ ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
+     */
 
     /*
     private void ongeneratewrap(){
@@ -1291,6 +1318,8 @@ public class firebaseUserManager extends AppCompatActivity {
         urlBuilder.addQueryParameter("seed_genres", "pop,rock"); // Example seed genres
         urlBuilder.addQueryParameter("seed_tracks", "0c6xIDDpzE81m2q797ordA"); // Example seed track ID
 
+        Log.d("User Access Token", spotifyAccessToken);
+
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .addHeader("Authorization", "Bearer " + spotifyAccessToken)
@@ -1315,7 +1344,6 @@ public class firebaseUserManager extends AppCompatActivity {
                     // Parse response JSON
                     String responseData = response.body().string();
                     System.out.println(responseData);
-
                     List<String> recommendedTracks = parseRecommendations(responseData);
 
                     // Update UI with recommended tracks
@@ -1889,7 +1917,7 @@ public class firebaseUserManager extends AppCompatActivity {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(true)
-                .setScopes(new String[] { "user-read-email" }) // <--- Change the scope of your requested token here
+                .setScopes(new String[] {"user-library-read","user-read-recently-played"}) // <--- Change the scope of your requested token here
                 .setCampaign("your-campaign-token")
                 .build();
     }
