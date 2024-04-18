@@ -329,7 +329,6 @@ public class firebaseUserManager extends AppCompatActivity {
                 } else if (action.equals("Information")) {
 
                     setContentView(R.layout.spotify_info);
-
                     generateInfo = findViewById(R.id.generateSpotifyInfo);
                     nextInfo = findViewById(R.id.traverseInfo);
                     userSpotifyInfo = findViewById(R.id.spotifyInfoTextView);
