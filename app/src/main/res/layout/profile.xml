@@ -78,75 +78,60 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="36dp"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/userLocationProfile">
+                    app:layout_constraintTop_toBottomOf="@+id/userLocationProfile"
+                    app:layout_constraintVertical_bias="0.0">
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/HomeButton"
+                        style="@android:style/Widget.Button"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="32dp"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        style="@android:style/Widget.Button"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/profile_actions_background"
-                        android:textAlignment="center"
-                        android:text="Home"
                         android:onClick="backToHomePage"
-                         />
+                        android:text="Home"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/ViewSummaryButton"
+                        style="@android:style/Widget.Button"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="32dp"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        style="@android:style/Widget.Button"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/profile_actions_background"
-                        android:textAlignment="center"
                         android:text="View Summary"
-                         />
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/SpotifyInfromationButton"
+                        style="@android:style/Widget.Button"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="32dp"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        style="@android:style/Widget.Button"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/profile_actions_background"
-                        android:textAlignment="center"
                         android:text="Spotify Information"
-                        />
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/friendsButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="10dp"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        style="@android:style/Widget.Button"
-                        android:layout_marginEnd="32dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/profile_actions_background"
                         android:textAlignment="center"
-                        android:text="Friends" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/AccountSettingsButton"
@@ -158,16 +143,14 @@
                         android:layout_marginEnd="32dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/profile_actions_background"
-                        android:text="Account Settings"
                         android:onClick="accountSettingsClick"
+                        android:text="Account Settings"
                         android:textAlignment="center"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
 
-
-
-               </LinearLayout>
+                </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

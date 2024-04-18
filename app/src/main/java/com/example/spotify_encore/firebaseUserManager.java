@@ -179,6 +179,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
     TextView topTrackText;
     TextView topArtistText;
+    TextView topAlbumText;
     Spinner spotifySum;
 
 
@@ -206,7 +207,6 @@ public class firebaseUserManager extends AppCompatActivity {
         FdataBase = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-
 
         if (user == null) {
             // If user is not signed in, redirect to authentication activity (assuming authentication.class is your sign-in activity)
@@ -261,7 +261,9 @@ public class firebaseUserManager extends AppCompatActivity {
                             // Delete user account
                             deleteUserAccount();
                             // Redirect to application core activity
-                            Intent sign = new Intent(getApplicationContext(), applicationCore.class);
+                            Intent sign = new Intent(getApplicationContext(), firebaseUserManager.class);
+                            String authentication = "login";
+                            sign.putExtra("userAction", authentication);
                             startActivity(sign);
                             finish();
                         }
@@ -382,6 +384,7 @@ public class firebaseUserManager extends AppCompatActivity {
                     setContentView(R.layout.create_summary);
                     topTrackText = findViewById(R.id.topTrackTextT);
                     topArtistText = findViewById(R.id.topArtistTextT);
+                    topAlbumText = findViewById(R.id.topAlbumTextT);
 
                     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sort_options, android.R.layout.simple_spinner_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -524,7 +527,7 @@ public class firebaseUserManager extends AppCompatActivity {
     public void updateUserInfo(String newEmail, String newPassword, String currentPassword) {
         if (!newEmail.isEmpty()) {
             // Re-authenticate the user if they have been logged in for a while
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            FirebaseUser currentUser = user;
             if (currentUser != null) {
                 AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
                 currentUser.reauthenticate(credential)
@@ -565,24 +568,42 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
-    public void deleteUserAccount() {
-        user.delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(firebaseUserManager.this, "Account Deleted",
-                                    Toast.LENGTH_SHORT).show();
+    private void deleteUserAccount() {
+        if (user != null) {
+            user.delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // Account deleted successfully
+                                Toast.makeText(firebaseUserManager.this, "Account Deleted",
+                                        Toast.LENGTH_SHORT).show();
+                                // Redirect to application core activity
+                                Intent sign = new Intent(getApplicationContext(), authentication.class);
+                                String authentication = "LogIn";
+                                sign.putExtra("userAction", authentication);
+                                startActivity(sign);
+                                finish();
+                            } else {
+                                // Account deletion failed
+                                Toast.makeText(firebaseUserManager.this, "Failed to delete account: " + task.getException().getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            // User is not signed in
+            Toast.makeText(firebaseUserManager.this, "User is not signed in",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void userSignOut() {
         auth.signOut();
-        Intent intent = new Intent(getApplicationContext(), authentication.class);
-        intent.putExtra("userAction", "LogIn");
-        startActivity(intent);
+        Intent sign = new Intent(getApplicationContext(), authentication.class);
+        String authentication = "LogIn";
+        sign.putExtra("userAction", authentication);
+        startActivity(sign);
         finish();
     }
 
@@ -652,6 +673,7 @@ public class firebaseUserManager extends AppCompatActivity {
                             @Override
                             public void run() {
                                 topTrackText.setText(topTrackInfo);
+                                topAlbumText.setText(albumName);
                             }
                         });
                     } else {
