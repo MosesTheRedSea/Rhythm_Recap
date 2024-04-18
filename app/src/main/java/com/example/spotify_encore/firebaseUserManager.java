@@ -603,9 +603,6 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
-
-
-
                 }
             }
         }
@@ -617,11 +614,7 @@ public class firebaseUserManager extends AppCompatActivity {
     ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
      */
 
-    /*
 
-     */
-
-    /*
     private String[][] getWrapData(String Token) throws IOException, InterruptedException {
         String[][] stuff = new String[2][5];
         int count = 0;
@@ -688,9 +681,8 @@ public class firebaseUserManager extends AppCompatActivity {
         return stuff;
     }
 
-     */
 
-    /*
+
     private void Run(Call mCall) throws IOException {
         mCall.enqueue(new Callback() {
             @Override
@@ -715,7 +707,8 @@ public class firebaseUserManager extends AppCompatActivity {
     private boolean waiting() {
         return data == null;
     }
-     */
+
+    /*
 
     private String[][] getWrapData(String Token) throws IOException, InterruptedException {
         String[][] stuff = new String[3][5];
@@ -806,7 +799,8 @@ public class firebaseUserManager extends AppCompatActivity {
 
         return;
     }
-
+    */
+    /*
     private void playMusic(String musicUrl) {
         if (mediaPlayer != null) {
             mediaPlayer.release();
@@ -852,6 +846,7 @@ public class firebaseUserManager extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
+     */
 
     /*
         ░█▀▀▀ ░█▄─░█ ░█▀▀▄ ───░█ ░█▀▀█ █▀▀█ █▀▀▄ █▀▀
@@ -859,7 +854,7 @@ public class firebaseUserManager extends AppCompatActivity {
         ░█▄▄▄ ░█──▀█ ░█▄▄▀ ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
      */
 
-    /*
+
     private void ongeneratewrap(){
         try {
             wrap = getWrapData(mAccessToken);
@@ -869,15 +864,15 @@ public class firebaseUserManager extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
-     */
 
-    /*
+
+
     private void onClick(View v) {
         ongeneratewrap();
         cadapter = new CustomAdapter(this, wrap);
         listView.setAdapter(adapter);
     }
-    */
+
 
 
 
