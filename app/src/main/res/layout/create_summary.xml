@@ -12,7 +12,6 @@
         android:layout_height="764dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
@@ -167,13 +166,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.974" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/generateSummary"
         style="@android:style/Widget.Button"
         android:layout_width="39dp"
         android:layout_height="37dp"
         android:background="@drawable/profile_actions_background"
-        android:text="G"
+        android:src="@android:drawable/ic_popup_sync"
+        android:text="M"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -190,10 +190,12 @@
         android:layout_width="39dp"
         android:layout_height="37dp"
         android:background="@drawable/profile_actions_background"
+        android:src="?attr/actionModeShareDrawable"
         android:text="E"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.956"
@@ -201,13 +203,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.976" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/exportButton"
         style="@android:style/Widget.Button"
         android:layout_width="39dp"
         android:layout_height="37dp"
         android:background="@drawable/profile_actions_background"
         android:onClick="backToHomePage"
+        android:src="@android:drawable/stat_sys_download"
         android:text="S"
         android:textAlignment="center"
         android:textSize="18sp"
