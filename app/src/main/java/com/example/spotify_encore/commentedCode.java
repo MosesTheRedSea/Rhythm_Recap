@@ -131,7 +131,61 @@ import okhttp3.Response;
 
 public class commentedCode {
 
+/*
+ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sort_options, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+                    spotifySum.setAdapter(adapter);
+
+                    sumGoHome = findViewById(R.id.sumHomeButt);
+                    spotifySum = findViewById(R.id.generateSummary);
+
+                    spotifySum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            String selectedOption = parent.getItemAtPosition(position).toString();
+
+                            switch (selectedOption) {
+                                case "1 Week":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("short_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("short_term");
+
+                                    break;
+                                case "1 Month":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("medium_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("medium_term");
+
+                                    break;
+                                case "1 Year":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("long_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("long_term");
+                                    break;
+                                case "All Time":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("all_time");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("all_time");
+                                    break;
+                                default:
+                                    // Handle default case or do nothing
+                                    break;
+                            }
+
+                        }
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                            // Do nothing
+                        }
+                    });
+
+                    sumGoHome.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+                            intent.putExtra("userAction", "homepage");
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+ */
 
 
 
@@ -269,7 +323,69 @@ public class commentedCode {
     }
      */
 
+  /*
+                    wrapListView = findViewById(R.id.wrapListView);
+                    generateWrap = findViewById(R.id.generateButton);
+                    gettoken = findViewById(R.id.gettoken);
+                    listView = findViewById(R.id.wrapListView);
 
+
+
+                    // Create an ArrayList and add the hard-coded Wrap object
+                    ArrayList<Wrap> wraps = new ArrayList<>();
+                    wraps.add(wrap4song);
+
+                    // Create and set the adapter for the ListView
+
+                    WrapAdapter adapter = new WrapAdapter(firebaseUserManager.this, wraps);
+                    wrapListView.setAdapter(adapter);
+
+                    // Set click listener for ListView item
+                    wrapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        private MediaPlayer mediaPlayer; // Reference to the currently playing MediaPlayer
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // Stop the currently playing music (if any)
+                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                                mediaPlayer.stop();
+                                mediaPlayer.release();
+                            }
+
+                            // Assuming position starts from 0
+                            if (position < 5) {
+                                // Check if the data is not null and the number of rows is at least 3
+                                if (wrap[2][position] != null) {
+                                    // Get the song URL from the 3rd row and 0th column (assuming the URL is in the first column)
+                                    String songUrl = wrap[2][position];
+
+                                    // Remove slashes from the song URL if needed
+                                    String musicUrl = songUrl.replace("\\", "");
+
+                                    // Create a new MediaPlayer instance and start playback
+                                    mediaPlayer = new MediaPlayer();
+                                    try {
+                                        mediaPlayer.setDataSource(musicUrl);
+                                        mediaPlayer.prepare();
+                                        mediaPlayer.start();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                        // Handle error
+                                    }
+                                } else {
+                                    // Handle case where the data is not available or doesn't have enough rows
+                                    Toast.makeText(firebaseUserManager.this, "No song URL available", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
+
+                    // Method that makes an Onclick
+                    generateWrap.setOnClickListener(this::onClick);
+
+                    gettoken.setOnClickListener((v) -> {
+                        getAccessToken();
+                    });
+                     */
 
 
 

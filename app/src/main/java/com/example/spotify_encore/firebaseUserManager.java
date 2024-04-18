@@ -247,9 +247,6 @@ public class firebaseUserManager extends AppCompatActivity {
                     });
 
 
-
-
-
                     // Set click listener for connecting Spotify
                     connectSpotify.setOnClickListener((v) -> {
                         // Start Spotify authentication flow
@@ -382,69 +379,45 @@ public class firebaseUserManager extends AppCompatActivity {
                     });
 
                 } else if (action.equals("create_summary")) {
-                    setContentView(R.layout.summary);
+                    setContentView(R.layout.create_summary);
+                    topTrackText = findViewById(R.id.topTrackTextT);
+                    topArtistText = findViewById(R.id.topArtistTextT);
 
-                    sumGoHome = findViewById(R.id.homeNavButton);
-                    wrapListView = findViewById(R.id.wrapListView);
-                    generateWrap = findViewById(R.id.generateButton);
-                    gettoken = findViewById(R.id.gettoken);
-                    listView = findViewById(R.id.wrapListView);
+                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sort_options, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spotifySum = findViewById(R.id.summarSelect);
+                    spotifySum.setAdapter(adapter);
 
+                    sumGoHome = findViewById(R.id.sumHomeButt);
 
-
-                    // Create an ArrayList and add the hard-coded Wrap object
-                    ArrayList<Wrap> wraps = new ArrayList<>();
-                    wraps.add(wrap4song);
-
-                    // Create and set the adapter for the ListView
-
-                    WrapAdapter adapter = new WrapAdapter(firebaseUserManager.this, wraps);
-                    wrapListView.setAdapter(adapter);
-
-                    // Set click listener for ListView item
-                    wrapListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        private MediaPlayer mediaPlayer; // Reference to the currently playing MediaPlayer
+                    generateSummary = findViewById(R.id.generateSummary);
+                    generateSummary.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            // Stop the currently playing music (if any)
-                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                                mediaPlayer.stop();
-                                mediaPlayer.release();
-                            }
+                        public void onClick(View v) {
+                            // Get the selected option from the spinner
+                            String selectedOption = spotifySum.getSelectedItem().toString();
 
-                            // Assuming position starts from 0
-                            if (position < 5) {
-                                // Check if the data is not null and the number of rows is at least 3
-                                if (wrap[2][position] != null) {
-                                    // Get the song URL from the 3rd row and 0th column (assuming the URL is in the first column)
-                                    String songUrl = wrap[2][position];
+                            // Call the method to generate summary based on the selected option
+                            switch (selectedOption) {
+                                case "1 Week":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("short_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("short_term");
 
-                                    // Remove slashes from the song URL if needed
-                                    String musicUrl = songUrl.replace("\\", "");
+                                    break;
+                                case "1 Month":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("medium_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("medium_term");
 
-                                    // Create a new MediaPlayer instance and start playback
-                                    mediaPlayer = new MediaPlayer();
-                                    try {
-                                        mediaPlayer.setDataSource(musicUrl);
-                                        mediaPlayer.prepare();
-                                        mediaPlayer.start();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                        // Handle error
-                                    }
-                                } else {
-                                    // Handle case where the data is not available or doesn't have enough rows
-                                    Toast.makeText(firebaseUserManager.this, "No song URL available", Toast.LENGTH_SHORT).show();
-                                }
+                                    break;
+                                case "1 Year":
+                                    retrieveSpotifyAccessTokenAndGetTopTrack("long_term");
+                                    retrieveSpotifyAccessTokenAndGetTopArtist("long_term");
+                                    break;
+                                default:
+                                    // Handle default case or do nothing
+                                    break;
                             }
                         }
-                    });
-
-                    // Method that makes an Onclick
-                    generateWrap.setOnClickListener(this::onClick);
-
-                    gettoken.setOnClickListener((v) -> {
-                        getAccessToken();
                     });
 
                     sumGoHome.setOnClickListener(new View.OnClickListener() {
@@ -456,6 +429,7 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
+
                 }
             }
         }
@@ -612,7 +586,6 @@ public class firebaseUserManager extends AppCompatActivity {
         finish();
     }
 
-
     /*
         ░█▀▀▀█ █▀▀█ █▀▀█ ▀▀█▀▀ ─▀─ █▀▀ █──█ 　 ─█▀▀█ ░█▀▀█ ▀█▀
         ─▀▀▀▄▄ █──█ █──█ ──█── ▀█▀ █▀▀ █▄▄█ 　 ░█▄▄█ ░█▄▄█ ░█─
@@ -624,8 +597,9 @@ public class firebaseUserManager extends AppCompatActivity {
 
         // Construct the URL for the top tracks endpoint
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
-        urlBuilder.addQueryParameter("time_range", "short_term"); // "short_term" or "long_term"
-        urlBuilder.addQueryParameter("limit", "1"); // Retrieve only the top track
+        urlBuilder.addQueryParameter("time_range", timeline); // "short_term" or "long_term"
+        urlBuilder.addQueryParameter("limit", "20"); // Retrieve only the top track
+        urlBuilder.addQueryParameter("offset", "0");
 
         // Build the request with authorization header and GET method
         Request request = new Request.Builder()
@@ -658,12 +632,22 @@ public class firebaseUserManager extends AppCompatActivity {
                     if (tracks.length() > 0) {
                         // Get details of the top track
                         JSONObject topTrack = tracks.getJSONObject(0);
-                        JSONObject track = topTrack.getJSONObject("track");
-                        String trackName = track.getString("name");
-                        String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
+                        //JSONObject track = topTrack.getJSONObject("track");
+                        //String trackName = track.getString("name");
+                        //String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
 
+                        JSONObject album = topTrack.getJSONObject("album");
+                        String albumName = album.getString("name");
+
+                        JSONArray artists = topTrack.getJSONArray("artists");
+                        JSONObject artist = artists.getJSONObject(0);
+                        String artistName = artist.getString("name");
+
+                        String trackName = topTrack.getString("name");
+                        int popularity = topTrack.getInt("popularity");
+                        String previewUrl = topTrack.getString("preview_url");
                         // Update UI with the top track information (on the main thread)
-                        String topTrackInfo = "Top Track: " + trackName + " by " + artistName;
+                        String topTrackInfo = trackName + " : " + artistName;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -682,10 +666,10 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
 
-    private void getTopArtist(String spotifyAccessToken) {
+    private void getTopArtist(String spotifyAccessToken, String timeline) {
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/artists").newBuilder();
-        urlBuilder.addQueryParameter("time_range", "short_term");
+        urlBuilder.addQueryParameter("time_range", timeline);
         urlBuilder.addQueryParameter("limit", "10");
         urlBuilder.addQueryParameter("offset", "0");
 
@@ -727,7 +711,7 @@ public class firebaseUserManager extends AppCompatActivity {
                         String artistName = firstArtist.getString("name");
 
                         // Update UI with the top artist information
-                        final String topArtistInfo = "Top Artist: " + artistName;
+                        final String topArtistInfo = artistName;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -847,14 +831,14 @@ public class firebaseUserManager extends AppCompatActivity {
         });
     }
 
-    private void retrieveSpotifyAccessTokenAndGetTopTrack() {
+    private void retrieveSpotifyAccessTokenAndGetTopTrack(String timeline) {
         retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
             @Override
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the retrieved Spotify access token to make the getTopTracks API call
                     //getTopTrack(spotifyAccessToken);
-                    getTopTrack(spotifyAccessToken, "short_term");
+                    getTopTrack(spotifyAccessToken, timeline);
                     Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Tracks", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
@@ -885,7 +869,7 @@ public class firebaseUserManager extends AppCompatActivity {
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the retrieved Spotify access token to make the getTopArtist API call
-                    getTopArtist(spotifyAccessToken);
+                    getTopArtist(spotifyAccessToken, timeline);
                     Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Artist", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
@@ -999,7 +983,6 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
     private void retrieveSpotifyAccessTokenFromUserProfile(OnTokenRetrievedListener listener) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
@@ -1029,7 +1012,6 @@ public class firebaseUserManager extends AppCompatActivity {
     }
 
     private void addSpotifyAccessTokenToUserProfile(String spotifyAccessToken) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
@@ -1138,7 +1120,7 @@ public class firebaseUserManager extends AppCompatActivity {
     private AuthorizationRequest getAuthenticationRequest(AuthorizationResponse.Type type) {
         return new AuthorizationRequest.Builder(CLIENT_ID, type, getRedirectUri().toString())
                 .setShowDialog(true)
-                .setScopes(new String[] {"user-library-read","user-read-recently-played"}) // <--- Change the scope of your requested token here
+                .setScopes(new String[] {"user-library-read","user-read-recently-played", "user-top-read"}) // <--- Change the scope of your requested token here
                 .setCampaign("your-campaign-token")
                 .build();
     }
