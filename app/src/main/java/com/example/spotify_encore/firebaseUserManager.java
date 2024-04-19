@@ -774,6 +774,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
                         // Here I can play the Top 5 Song Previews
                         playTrackPreviews(wrap);
+
                     }
 
                     @Override
@@ -790,6 +791,7 @@ public class firebaseUserManager extends AppCompatActivity {
                 Log.e("Error", errorMessage);
             }
         });
+
 
 
     }
