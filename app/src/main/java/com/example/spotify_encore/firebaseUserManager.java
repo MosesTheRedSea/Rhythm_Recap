@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -805,13 +806,17 @@ public class firebaseUserManager extends AppCompatActivity {
                     try {
                         mediaPlayer.setDataSource(previewUrl);
                         mediaPlayer.prepare();
+                        Log.d("playTrackPreviews", "Media player prepared");
                         mediaPlayer.start();
+                        Log.d("playTrackPreviews", "Media player started");
                     } catch (IOException e) {
                         e.printStackTrace();
                         // Handle error while preparing or playing the media
+                        Log.e("playTrackPreviews", "Error preparing media player: " + e.getMessage());
                     } finally {
                         // Release the media player resources
                         mediaPlayer.release();
+                        Log.d("playTrackPreviews", "Media player released");
                     }
                 }
             }
