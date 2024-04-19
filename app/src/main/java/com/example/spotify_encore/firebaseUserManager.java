@@ -40,6 +40,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -198,6 +199,27 @@ public class firebaseUserManager extends AppCompatActivity {
     private ListView listView;
     private CustomAdapter cadapter;
 
+    private void deleteUserAccount(FirebaseUser user) {
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // Account deleted successfully
+                            Toast.makeText(firebaseUserManager.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+                            // Redirect to application core activity
+                            Intent coreIntent = new Intent(getApplicationContext(), authentication.class);
+                            coreIntent.putExtra("userAction", "LogIn");
+                            startActivity(coreIntent);
+                            finish();
+                        } else {
+                            // Account deletion failed
+                            Toast.makeText(firebaseUserManager.this, "Failed to delete account: " + task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
     // These are only outline methods they can be changed if needed
     @SuppressLint("CutPasteId")
@@ -254,20 +276,53 @@ public class firebaseUserManager extends AppCompatActivity {
 
                     });
 
-                    // Set click listener for deleting account
+
+                    // Set click listener for deleting account - Currently not working
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // Delete user account
-                            deleteUserAccount();
-                            // Redirect to application core activity
-                            Intent sign = new Intent(getApplicationContext(), firebaseUserManager.class);
-                            String authentication = "login";
-                            sign.putExtra("userAction", authentication);
-                            startActivity(sign);
-                            finish();
+
                         }
                     });
+
+                    /*
+                    deleteAccount.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Get the current user
+                            FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
+                            if (user1 != null) {
+                                // Prompt the user to re-authenticate
+                                user1.getIdToken(true)
+                                        .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+                                            @Override
+                                            public void onSuccess(GetTokenResult result) {
+                                                // Token refreshed successfully, perform sensitive operation
+                                                // For example, delete the user account
+                                                deleteUserAccount(user1);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Failed to refresh token, handle error
+                                                Log.e("TokenRefreshError", "Failed to refresh token: " + e.getMessage());
+                                                // You may want to display an error message to the user or take appropriate action
+                                            }
+                                        });
+                            } else {
+                                // User is not signed in
+                                Toast.makeText(firebaseUserManager.this, "User is not signed in", Toast.LENGTH_SHORT).show();
+                                // Redirect to the sign-in activity
+                                Intent intent = new Intent(getApplicationContext(), authentication.class);
+                                intent.putExtra("userAction", "LogIn");
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
+                     */
+
 
                     // Set click listener for signing out
                     signOut.setOnClickListener(new View.OnClickListener() {
@@ -438,6 +493,39 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
+    private void saveDataToFirebase() {
+        // Assuming currentUserEmail is the user's email address
+        DatabaseReference userRef = FdataBase.getReference("UserUIDs").child(currentUserEmail).child("Wrap");
+
+        // Iterate through the wrap array columns (songs)
+        for (int j = 0; j < wrap[0].length; j++) {
+            // Create a child node for each song
+            DatabaseReference songRef = userRef.child("Song" + (j + 1));
+
+            // Iterate through the rows (attributes) of the current song
+            for (int i = 0; i < wrap.length; i++) {
+                // Get the attribute value for the current row and column
+                String attributeValue = wrap[i][j];
+
+                // Set the attribute value under the appropriate child node
+                switch (i) {
+                    case 0:
+                        songRef.child("Name").setValue(attributeValue);
+                        break;
+                    case 1:
+                        songRef.child("Artist").setValue(attributeValue);
+                        break;
+                    case 2:
+                        songRef.child("PreviewURL").setValue(attributeValue);
+                        break;
+                    default:
+                        // Handle unexpected cases if any
+                        break;
+                }
+            }
+        }
+    }
+
     private void onClick(View v) {
         // Initiate the API call
         getWrapData(mAccessToken);
@@ -518,6 +606,7 @@ public class firebaseUserManager extends AppCompatActivity {
         startActivity(sign);
         finish();
     }
+
     /*
     ░█▀▀▀ ░█▀▀▄ ▀█▀ ▀▀█▀▀ 　 ░█─░█ ░█▀▀▀█ ░█▀▀▀ ░█▀▀█ 　 ▀█▀ ░█▄─░█ ░█▀▀▀ ░█▀▀▀█
     ░█▀▀▀ ░█─░█ ░█─ ─░█── 　 ░█─░█ ─▀▀▀▄▄ ░█▀▀▀ ░█▄▄▀ 　 ░█─ ░█░█░█ ░█▀▀▀ ░█──░█
@@ -568,35 +657,7 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
-    private void deleteUserAccount() {
-        if (user != null) {
-            user.delete()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                // Account deleted successfully
-                                Toast.makeText(firebaseUserManager.this, "Account Deleted",
-                                        Toast.LENGTH_SHORT).show();
-                                // Redirect to application core activity
-                                Intent sign = new Intent(getApplicationContext(), authentication.class);
-                                String authentication = "LogIn";
-                                sign.putExtra("userAction", authentication);
-                                startActivity(sign);
-                                finish();
-                            } else {
-                                // Account deletion failed
-                                Toast.makeText(firebaseUserManager.this, "Failed to delete account: " + task.getException().getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        } else {
-            // User is not signed in
-            Toast.makeText(firebaseUserManager.this, "User is not signed in",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     public void userSignOut() {
         auth.signOut();
@@ -619,8 +680,8 @@ public class firebaseUserManager extends AppCompatActivity {
         // Construct the URL for the top tracks endpoint
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
         urlBuilder.addQueryParameter("time_range", timeline); // "short_term" or "long_term"
-        urlBuilder.addQueryParameter("limit", "20"); // Retrieve only the top track
-        urlBuilder.addQueryParameter("offset", "0");
+        urlBuilder.addQueryParameter("limit", "0"); // Retrieve only the top track
+        //urlBuilder.addQueryParameter("offset", "5");
 
         // Build the request with authorization header and GET method
         Request request = new Request.Builder()
@@ -653,10 +714,14 @@ public class firebaseUserManager extends AppCompatActivity {
                     if (tracks.length() > 0) {
                         // Get details of the top track
                         JSONObject topTrack = tracks.getJSONObject(0);
+
                         //JSONObject track = topTrack.getJSONObject("track");
                         //String trackName = track.getString("name");
                         //String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
 
+                        StringBuilder output = new StringBuilder();
+
+                        // Top Track
                         JSONObject album = topTrack.getJSONObject("album");
                         String albumName = album.getString("name");
 
@@ -668,11 +733,17 @@ public class firebaseUserManager extends AppCompatActivity {
                         int popularity = topTrack.getInt("popularity");
                         String previewUrl = topTrack.getString("preview_url");
                         // Update UI with the top track information (on the main thread)
+
+
                         String topTrackInfo = trackName + " : " + artistName;
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                topTrackText.setText(topTrackInfo);
+
+
+
+                                topTrackText.setText(output);
                                 topAlbumText.setText(albumName);
                             }
                         });
@@ -737,6 +808,8 @@ public class firebaseUserManager extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                String output = "";
+
                                 topArtistText.setText(topArtistInfo);
                             }
                         });
