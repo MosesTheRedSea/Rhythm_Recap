@@ -492,40 +492,8 @@ public class firebaseUserManager extends AppCompatActivity {
             }
         }
     }
-
-    private void saveDataToFirebase() {
-        // Assuming currentUserEmail is the user's email address
-        DatabaseReference userRef = FdataBase.getReference("UserUIDs").child(currentUserEmail).child("Wrap");
-
-        // Iterate through the wrap array columns (songs)
-        for (int j = 0; j < wrap[0].length; j++) {
-            // Create a child node for each song
-            DatabaseReference songRef = userRef.child("Song" + (j + 1));
-
-            // Iterate through the rows (attributes) of the current song
-            for (int i = 0; i < wrap.length; i++) {
-                // Get the attribute value for the current row and column
-                String attributeValue = wrap[i][j];
-
-                // Set the attribute value under the appropriate child node
-                switch (i) {
-                    case 0:
-                        songRef.child("Name").setValue(attributeValue);
-                        break;
-                    case 1:
-                        songRef.child("Artist").setValue(attributeValue);
-                        break;
-                    case 2:
-                        songRef.child("PreviewURL").setValue(attributeValue);
-                        break;
-                    default:
-                        // Handle unexpected cases if any
-                        break;
-                }
-            }
-        }
-    }
-
+dd
+dd
     private void onClick(View v) {
         // Initiate the API call
         getWrapData(mAccessToken);
@@ -566,6 +534,40 @@ public class firebaseUserManager extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    private void saveDataToFirebase() {
+        // Assuming currentUserEmail is the user's email address
+        DatabaseReference userRef = FdataBase.getReference("UserUIDs").child(currentUserEmail).child("Wrap");
+
+        // Iterate through the wrap array columns (songs)
+        for (int j = 0; j < wrap[0].length; j++) {
+            // Create a child node for each song
+            DatabaseReference songRef = userRef.child("Song" + (j + 1));
+
+            // Iterate through the rows (attributes) of the current song
+            for (int i = 0; i < wrap.length; i++) {
+                // Get the attribute value for the current row and column
+                String attributeValue = wrap[i][j];
+
+                // Set the attribute value under the appropriate child node
+                switch (i) {
+                    case 0:
+                        songRef.child("Name").setValue(attributeValue);
+                        break;
+                    case 1:
+                        songRef.child("Artist").setValue(attributeValue);
+                        break;
+                    case 2:
+                        songRef.child("PreviewURL").setValue(attributeValue);
+                        break;
+                    default:
+                        // Handle unexpected cases if any
+                        break;
+                }
+            }
+        }
     }
 
 
