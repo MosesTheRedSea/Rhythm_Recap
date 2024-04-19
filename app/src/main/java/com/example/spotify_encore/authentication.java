@@ -57,6 +57,7 @@ public class authentication extends AppCompatActivity {
 
     private AppCompatButton connectSpotifyAccountButton;
 
+    int index = 0;
 
     // Login Information
     private TextView textEmailLogin;
@@ -75,7 +76,6 @@ public class authentication extends AppCompatActivity {
 
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
     private String mAccessToken, mAccessCode;
-
     private Call mCall;
 
     // When initializing your Activity, check to see if the user is currently signed in
@@ -88,13 +88,10 @@ public class authentication extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if(currentUser != null) {
-
             Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
-
             intent.putExtra("userAction", "homepage");
-
+            intent.putExtra("userId", currentUser.getUid());
             startActivity(intent);
-
             finish();
         }
     }
@@ -111,7 +108,6 @@ public class authentication extends AppCompatActivity {
         editTextPasswordSignUp = findViewById(R.id.editTextPasswordSignUp);
         editTextEmailLogin = findViewById(R.id.editTextEmailLogin);
         editTextPasswordLogin = findViewById(R.id.editTextPasswordLogin);
-
 
         // User Logs into their account
         if (action.equals("LogIn")) {
@@ -130,12 +126,10 @@ public class authentication extends AppCompatActivity {
                         Toast.makeText(authentication.this, "Enter Email", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
                     if (TextUtils.isEmpty(password)) {
                         Toast.makeText(authentication.this, "Enter Password", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
                     mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override

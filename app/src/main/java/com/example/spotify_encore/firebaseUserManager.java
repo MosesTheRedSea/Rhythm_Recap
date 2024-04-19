@@ -140,7 +140,7 @@ public class firebaseUserManager extends AppCompatActivity {
     private TextView userNameProfile;
     private TextView userLocationProfile;
     private AppCompatButton HomeButton;
-    private AppCompatButton ViewSummaryButton;
+    private AppCompatButton viewSummaryButton;
     private AppCompatButton SpotifyInfromationButton;
     private AppCompatButton friendsButton;
     private Button AccountSettingsButton;
@@ -174,7 +174,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
     AppCompatButton sumGoHome;
 
-
+    String userID;
 
     AppCompatButton generateSummary;
 
@@ -190,14 +190,24 @@ public class firebaseUserManager extends AppCompatActivity {
     FirebaseDatabase FdataBase;
     DatabaseReference reference;
     String currentUserEmail;
-    String[][] wrap;
+    List<Wrap> wrap = new ArrayList<>();
     Wrap wrap4song;
     ListView wrapListView;
-    private MediaPlayer mediaPlayer;
+
     private Response response;
     private String[] data = null;
     private ListView listView;
     private CustomAdapter cadapter;
+
+    AppCompatButton nextButton;
+
+    AppCompatButton previousButton;
+
+    TextView viewSumTracks;
+
+    TextView viewSumAlbum;
+
+    TextView viewSumArtist;
 
     private void deleteUserAccount(FirebaseUser user) {
         user.delete()
@@ -207,6 +217,7 @@ public class firebaseUserManager extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Account deleted successfully
                             Toast.makeText(firebaseUserManager.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+                            deleteUserDataFromDatabase();
                             // Redirect to application core activity
                             Intent coreIntent = new Intent(getApplicationContext(), authentication.class);
                             coreIntent.putExtra("userAction", "LogIn");
@@ -219,6 +230,83 @@ public class firebaseUserManager extends AppCompatActivity {
                         }
                     }
                 });
+
+
+    }
+
+    private void deleteUserDataFromDatabase() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+            userRef.removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // User data deleted successfully from the database
+                            // Now delete the Spotify access token node
+                            deleteSpotifyAccessToken();
+                            // Also, delete the Spotify wraps node
+                            deleteSpotifyWraps();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Handle failure to delete user data from the database
+                            Log.e("Firebase", "Failed to delete user data: " + e.getMessage());
+                        }
+                    });
+        }
+    }
+
+    private void deleteSpotifyAccessToken() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference accessTokenRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("SpotifyAccessToken");
+            accessTokenRef.removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Spotify access token deleted successfully
+                            Log.d("Firebase", "Spotify access token deleted successfully");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Handle failure to delete Spotify access token
+                            Log.e("Firebase", "Failed to delete Spotify access token: " + e.getMessage());
+                        }
+                    });
+        }
+    }
+
+    private void deleteSpotifyWraps() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference wrapsRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Wraps");
+            wrapsRef.removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Spotify wraps deleted successfully
+                            Log.d("Firebase", "Spotify wraps deleted successfully");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Handle failure to delete Spotify wraps
+                            Log.e("Firebase", "Failed to delete Spotify wraps: " + e.getMessage());
+                        }
+                    });
+        }
     }
 
     // These are only outline methods they can be changed if needed
@@ -229,6 +317,7 @@ public class firebaseUserManager extends AppCompatActivity {
         FdataBase = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        userID = getIntent().getStringExtra("userId");
 
         if (user == null) {
             // If user is not signed in, redirect to authentication activity (assuming authentication.class is your sign-in activity)
@@ -281,6 +370,7 @@ public class firebaseUserManager extends AppCompatActivity {
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            deleteUserAccount(user);
 
                         }
                     });
@@ -365,8 +455,10 @@ public class firebaseUserManager extends AppCompatActivity {
                 } else if (action.equals("gamepage")) {
                     // Set content view to gamepage layout
                     setContentView(R.layout.game);
+
                 } else if (action.equals("profile")) {
                     setContentView(R.layout.profile);
+                    viewSummaryButton = findViewById(R.id.ViewSummaryButton);
 
                     spotifyInformation = findViewById(R.id.SpotifyInfromationButton);
                     spotifyInformation.setOnClickListener(new View.OnClickListener() {
@@ -374,6 +466,16 @@ public class firebaseUserManager extends AppCompatActivity {
                         public void onClick(View v) {
                             Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
                             intent.putExtra("userAction", "Information");
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+
+                    viewSummaryButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+                            intent.putExtra("userAction", "view_summary");
                             startActivity(intent);
                             finish();
                         }
@@ -458,18 +560,16 @@ public class firebaseUserManager extends AppCompatActivity {
                             // Call the method to generate summary based on the selected option
                             switch (selectedOption) {
                                 case "1 Week":
-                                    retrieveSpotifyAccessTokenAndGetTopTrack("short_term");
-                                    retrieveSpotifyAccessTokenAndGetTopArtist("short_term");
+                                    retrieveSpotifyAccessTokenAndGetTopItems("short_term");
 
                                     break;
                                 case "1 Month":
-                                    retrieveSpotifyAccessTokenAndGetTopTrack("medium_term");
-                                    retrieveSpotifyAccessTokenAndGetTopArtist("medium_term");
+                                    retrieveSpotifyAccessTokenAndGetTopItems("medium_term");
 
                                     break;
                                 case "1 Year":
-                                    retrieveSpotifyAccessTokenAndGetTopTrack("long_term");
-                                    retrieveSpotifyAccessTokenAndGetTopArtist("long_term");
+                                    retrieveSpotifyAccessTokenAndGetTopItems("long_term");
+
                                     break;
                                 default:
                                     // Handle default case or do nothing
@@ -488,12 +588,30 @@ public class firebaseUserManager extends AppCompatActivity {
                         }
                     });
 
+                } else if (action.equals("view_summary")) {
+                    setContentView(R.layout.view_summaries);
+
+                    previousButton = findViewById(R.id.viewPrevious);
+                    nextButton = findViewById(R.id.viewNextSummary);
+
+                    viewSumTracks = findViewById(R.id.topTrackText);
+                    viewSumAlbum = findViewById(R.id.topAlbumText);
+                    viewSumArtist = findViewById(R.id.topArtistText);
+
+
+
+
+
+
                 }
             }
         }
     }
-dd
-dd
+
+
+
+
+
     private void onClick(View v) {
         // Initiate the API call
         getWrapData(mAccessToken);
@@ -535,48 +653,6 @@ dd
             }
         });
     }
-
-
-    private void saveDataToFirebase() {
-        // Assuming currentUserEmail is the user's email address
-        DatabaseReference userRef = FdataBase.getReference("UserUIDs").child(currentUserEmail).child("Wrap");
-
-        // Iterate through the wrap array columns (songs)
-        for (int j = 0; j < wrap[0].length; j++) {
-            // Create a child node for each song
-            DatabaseReference songRef = userRef.child("Song" + (j + 1));
-
-            // Iterate through the rows (attributes) of the current song
-            for (int i = 0; i < wrap.length; i++) {
-                // Get the attribute value for the current row and column
-                String attributeValue = wrap[i][j];
-
-                // Set the attribute value under the appropriate child node
-                switch (i) {
-                    case 0:
-                        songRef.child("Name").setValue(attributeValue);
-                        break;
-                    case 1:
-                        songRef.child("Artist").setValue(attributeValue);
-                        break;
-                    case 2:
-                        songRef.child("PreviewURL").setValue(attributeValue);
-                        break;
-                    default:
-                        // Handle unexpected cases if any
-                        break;
-                }
-            }
-        }
-    }
-
-
-    /*
-        ░█▀▀▀ ░█▄─░█ ░█▀▀▄ ───░█ ░█▀▀█ █▀▀█ █▀▀▄ █▀▀
-        ░█▀▀▀ ░█░█░█ ░█─░█ ─▄─░█ ░█─── █──█ █──█ █▀▀
-        ░█▄▄▄ ░█──▀█ ░█▄▄▀ ░█▄▄█ ░█▄▄█ ▀▀▀▀ ▀▀▀─ ▀▀▀
-     */
-
 
 
     /*
@@ -670,29 +746,267 @@ dd
         finish();
     }
 
+
+
     /*
         ░█▀▀▀█ █▀▀█ █▀▀█ ▀▀█▀▀ ─▀─ █▀▀ █──█ 　 ─█▀▀█ ░█▀▀█ ▀█▀
         ─▀▀▀▄▄ █──█ █──█ ──█── ▀█▀ █▀▀ █▄▄█ 　 ░█▄▄█ ░█▄▄█ ░█─
         ░█▄▄▄█ █▀▀▀ ▀▀▀▀ ──▀── ▀▀▀ ▀── ▄▄▄█ 　 ░█─░█ ░█─── ▄█▄
      */
-    private void getTopTrack(String spotifyAccessToken, String timeline) {
-        // OkHttpClient for making the API call
+
+    private void displayTopTracksAndArtist(String spotifyAccessToken, String timeline) {
+        Wrap wrap = new Wrap();
+
+        // Call getTopTracks API
+        getTopTracks(spotifyAccessToken, timeline, wrap, new ApiCallback() {
+            @Override
+            public void onSuccess() {
+                // Call getTopArtist API after getTopTracks completes
+                getTopArtist(spotifyAccessToken, timeline, wrap, new ApiCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // Both API calls have completed, wrap object is fully populated
+                        Log.d("Output", wrap.toString());
+
+                        // Here is where I can Store the Information to users Firebase
+                        storeWrapDataInFirebaseUser(wrap);
+
+                        // Here I can play the Top 5 Song Previews
+                        playTrackPreviews(wrap);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        // Handle failure
+                        Log.e("Error", errorMessage);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                // Handle failure
+                Log.e("Error", errorMessage);
+            }
+        });
+
+
+    }
+
+    private void playTrackPreviews(Wrap wrap) {
+        // Check if wrap object contains any tracks
+        if (wrap != null && wrap.getTopTracks() != null && wrap.getTopTracks().size() >= 5) {
+            // Iterate through the first 5 tracks and play their previews
+            for (TrackInfo track : wrap.getTopTracks()) {
+                String previewUrl = track.getTrackUrl();
+                if (previewUrl != null && !previewUrl.isEmpty()) {
+                    // Start playing the track preview using a media player
+                    MediaPlayer mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(previewUrl);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Handle error while preparing or playing the media
+                    } finally {
+                        // Release the media player resources
+                        mediaPlayer.release();
+                    }
+                }
+            }
+        } else {
+            // Handle case where wrap object is null or doesn't contain enough tracks
+            System.out.println("Cannot Play Tracks - There are none");
+        }
+    }
+
+    private void getTopTracks(String spotifyAccessToken, String timeline, Wrap wrap, ApiCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
-        // Construct the URL for the top tracks endpoint
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
         urlBuilder.addQueryParameter("time_range", timeline); // "short_term" or "long_term"
-        urlBuilder.addQueryParameter("limit", "0"); // Retrieve only the top track
-        //urlBuilder.addQueryParameter("offset", "5");
+        urlBuilder.addQueryParameter("limit", "5"); // Retrieve top 5 tracks
 
-        // Build the request with authorization header and GET method
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .addHeader("Authorization", "Bearer " + spotifyAccessToken)
                 .get()
                 .build();
 
-        // Send the request asynchronously
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                e.printStackTrace();
+                // Handle request failure (e.g., network issues)
+                callback.onFailure("Failed to get top tracks: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    callback.onFailure("Unexpected response code: " + response.code());
+                    return;
+                }
+
+                try (ResponseBody responseBody = response.body()) {
+                    String responseData = responseBody.string();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONArray tracks = jsonResponse.getJSONArray("items");
+
+                    if (tracks.length() > 0) {
+                        // Prepare StringBuilder to store the output
+                        StringBuilder output = new StringBuilder();
+                        StringBuilder albumText = new StringBuilder();
+
+                        // Loop through each top track
+                        for (int i = 0; i < tracks.length(); i++) {
+                            JSONObject topTrack = tracks.getJSONObject(i);
+                            JSONObject album = topTrack.getJSONObject("album");
+                            String albumName = album.getString("name");
+                            JSONArray artists = topTrack.getJSONArray("artists");
+                            JSONObject artist = artists.getJSONObject(0);
+                            String artistName = artist.getString("name");
+                            String trackName = topTrack.getString("name");
+                            int popularity = topTrack.getInt("popularity");
+                            String previewUrl = topTrack.getString("preview_url");
+                            if (albumText.length() == 0) {
+                                albumText.append(albumName);
+                                wrap.setTopAlbum(albumName);
+                            }
+                            output.append(trackName).append(" : ").append(artistName).append("\n");
+                            // Create a new TrackInfo object and add it to the topTracks list in wrap
+                            wrap.getTopTracks().add(new TrackInfo(trackName, artistName, albumName, previewUrl));
+                        }
+
+                        // Update UI with the top 5 tracks information (on the main thread)
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Display the top tracks
+                                topTrackText.setText(output.toString());
+                                // Set the top album
+                                topAlbumText.setText(albumText);
+                                // Callback onSuccess
+                                callback.onSuccess();
+                            }
+                        });
+                    } else {
+                        // Handle case where no top tracks are found
+                        callback.onFailure("No top tracks found.");
+                    }
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                    // Handle JSON parsing or other errors
+                    callback.onFailure("Error processing response: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void getTopArtist(String spotifyAccessToken, String timeline, Wrap wrap, ApiCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/artists").newBuilder();
+        urlBuilder.addQueryParameter("time_range", timeline);
+        urlBuilder.addQueryParameter("limit", "10");
+        urlBuilder.addQueryParameter("offset", "0");
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                // Handle request failure
+                // For example, update UI to display an error message
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Display error message on UI
+                        topArtistText.setText("Failed to fetch top artists. Please try again later.");
+                    }
+                });
+                callback.onFailure("Failed to fetch top artists: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    // Handle unsuccessful response
+                    callback.onFailure("Unexpected response code: " + response.code());
+                    return;
+                }
+
+                try {
+                    String responseData = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONArray artists = jsonResponse.getJSONArray("items");
+
+                    if (artists.length() > 0) {
+                        JSONObject firstArtist = artists.getJSONObject(0);
+                        String artistName = firstArtist.getString("name");
+
+                        // Update UI with the top artist information
+                        final String topArtistInfo = artistName;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String output = "";
+                                topArtistText.setText(topArtistInfo);
+                            }
+                        });
+                        // Set top artist in wrap
+                        wrap.setTopArtist(artistName);
+                        callback.onSuccess();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Handle JSON parsing error
+                    // For example, update UI to display an error message
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Display error message on UI
+                            topArtistText.setText("Failed to parse response. Please try again later.");
+                        }
+                    });
+                    callback.onFailure("Error parsing top artist response: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    /*
+    private void displayTopTracksAndArtist(String spotifyAccessToken, String timeline) {
+        Wrap wrap = new Wrap();
+        // Call getTopTracks API
+        getTopTracks(spotifyAccessToken, timeline, wrap);
+        // Call getTopArtist API after getTopTracks completes
+        getTopArtist(spotifyAccessToken, timeline, wrap);
+        // Update TextView with wrap data after both API calls complete
+
+        // Here is where we can play the Music for the Wrap
+        Log.d("Output", wrap.toString());
+
+    }
+
+    private void getTopTracks(String spotifyAccessToken, String timeline, Wrap wrap) {
+        OkHttpClient client = new OkHttpClient();
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
+        urlBuilder.addQueryParameter("time_range", timeline); // "short_term" or "long_term"
+        urlBuilder.addQueryParameter("limit", "5"); // Retrieve top 5 tracks
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                .get()
+                .build();
+
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
@@ -703,50 +1017,173 @@ dd
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    // Handle unsuccessful response (e.g., invalid access token)
                     throw new IOException("Unexpected code " + response);
                 }
 
                 try (ResponseBody responseBody = response.body()) {
-                    // Parse the JSON response
                     String responseData = responseBody.string();
                     JSONObject jsonResponse = new JSONObject(responseData);
                     JSONArray tracks = jsonResponse.getJSONArray("items");
 
                     if (tracks.length() > 0) {
-                        // Get details of the top track
-                        JSONObject topTrack = tracks.getJSONObject(0);
-
-                        //JSONObject track = topTrack.getJSONObject("track");
-                        //String trackName = track.getString("name");
-                        //String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
-
                         StringBuilder output = new StringBuilder();
+                        StringBuilder albumText = new StringBuilder();
+                        // Loop through each top track
+                        for (int i = 0; i < tracks.length(); i++) {
+                            JSONObject topTrack = tracks.getJSONObject(i);
+                            JSONObject album = topTrack.getJSONObject("album");
+                            String albumName = album.getString("name");
+                            JSONArray artists = topTrack.getJSONArray("artists");
+                            JSONObject artist = artists.getJSONObject(0);
+                            String artistName = artist.getString("name");
+                            String trackName = topTrack.getString("name");
+                            int popularity = topTrack.getInt("popularity");
+                            String previewUrl = topTrack.getString("preview_url");
+                            if (albumText.length() == 0) {
+                                albumText.append(albumName);
+                                wrap.setTopAlbum(albumName);
+                            }
+                            output.append(trackName).append(" : ").append(artistName).append("\n");
+                            // Create a new TrackInfo object and add it to the topTracks list in wrap
+                            wrap.getTopTracks().add(new TrackInfo(trackName, artistName, albumName, previewUrl));
+                        }
 
-                        // Top Track
-                        JSONObject album = topTrack.getJSONObject("album");
-                        String albumName = album.getString("name");
 
-                        JSONArray artists = topTrack.getJSONArray("artists");
-                        JSONObject artist = artists.getJSONObject(0);
-                        String artistName = artist.getString("name");
-
-                        String trackName = topTrack.getString("name");
-                        int popularity = topTrack.getInt("popularity");
-                        String previewUrl = topTrack.getString("preview_url");
-                        // Update UI with the top track information (on the main thread)
+                        // Update UI with the top 5 tracks information (on the main thread)
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                topTrackText.setText(output.toString()); // Display the top tracks
+                                topAlbumText.setText(albumText); // Clear previous album display
+                            }
+                        });
 
 
-                        String topTrackInfo = trackName + " : " + artistName;
+                    } else {
+                        // Handle case where no top tracks are found
+                    }
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                    // Handle JSON parsing or other errors
+                }
+            }
+        });
+    }
+
+    private void getTopArtist(String spotifyAccessToken, String timeline, Wrap wrap) {
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/artists").newBuilder();
+        urlBuilder.addQueryParameter("time_range", timeline);
+        urlBuilder.addQueryParameter("limit", "1");
+        urlBuilder.addQueryParameter("offset", "0");
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                .get()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                // Handle request failure
+                // For example, update UI to display an error message
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    // Handle unsuccessful response
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                try {
+                    String responseData = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONArray artists = jsonResponse.getJSONArray("items");
+
+                    if (artists.length() > 0) {
+                        JSONObject firstArtist = artists.getJSONObject(0);
+                        String artistName = firstArtist.getString("name");
+                        wrap.setTopArtist(artistName); // Set the top artist in wrap
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                String output = "";
+                                topArtistText.setText(artistName);
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Handle JSON parsing error
+                    // For example, update UI to display an error message
+                }
+            }
+        });
+    }
+    */
 
+    /*
 
+    private void getTopTracks(String spotifyAccessToken, String timeline) {
+        OkHttpClient client = new OkHttpClient();
 
-                                topTrackText.setText(output);
-                                topAlbumText.setText(albumName);
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
+        urlBuilder.addQueryParameter("time_range", timeline); // "short_term" or "long_term"
+        urlBuilder.addQueryParameter("limit", "5"); // Retrieve top 5 tracks
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .addHeader("Authorization", "Bearer " + spotifyAccessToken)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                e.printStackTrace();
+                // Handle request failure (e.g., network issues)
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                try (ResponseBody responseBody = response.body()) {
+                    String responseData = responseBody.string();
+                    JSONObject jsonResponse = new JSONObject(responseData);
+                    JSONArray tracks = jsonResponse.getJSONArray("items");
+
+                    if (tracks.length() > 0) {
+                        // Prepare StringBuilder to store the output
+                        StringBuilder output = new StringBuilder();
+
+                        // Loop through each top track
+                        for (int i = 0; i < tracks.length(); i++) {
+                            JSONObject topTrack = tracks.getJSONObject(i);
+                            JSONObject album = topTrack.getJSONObject("album");
+                            String albumName = album.getString("name");
+                            JSONArray artists = topTrack.getJSONArray("artists");
+                            JSONObject artist = artists.getJSONObject(0);
+                            String artistName = artist.getString("name");
+                            String trackName = topTrack.getString("name");
+                            int popularity = topTrack.getInt("popularity");
+                            String previewUrl = topTrack.getString("preview_url");
+
+                            // Append track information to the output StringBuilder
+                            output.append(trackName).append(" : ").append(artistName).append("\n");
+                        }
+
+                        // Update UI with the top 5 tracks information (on the main thread)
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                topTrackText.setText(output.toString()); // Display the top tracks
+                                topAlbumText.setText(""); // Clear previous album display
                             }
                         });
                     } else {
@@ -811,7 +1248,6 @@ dd
                             @Override
                             public void run() {
                                 String output = "";
-
                                 topArtistText.setText(topArtistInfo);
                             }
                         });
@@ -831,6 +1267,7 @@ dd
             }
         });
     }
+     */
 
 
     private void makeRecommendationRequest(String spotifyAccessToken) {
@@ -928,14 +1365,14 @@ dd
         });
     }
 
-    private void retrieveSpotifyAccessTokenAndGetTopTrack(String timeline) {
+    private void retrieveSpotifyAccessTokenAndGetTopItems(String timeline) {
         retrieveSpotifyAccessTokenFromUserProfile(new OnTokenRetrievedListener() {
             @Override
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the retrieved Spotify access token to make the getTopTracks API call
                     //getTopTrack(spotifyAccessToken);
-                    getTopTrack(spotifyAccessToken, timeline);
+                    displayTopTracksAndArtist(spotifyAccessToken, timeline);
                     Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Tracks", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
@@ -966,7 +1403,7 @@ dd
             public void onTokenRetrieved(String spotifyAccessToken) {
                 if (spotifyAccessToken != null) {
                     // Use the retrieved Spotify access token to make the getTopArtist API call
-                    getTopArtist(spotifyAccessToken, timeline);
+                    //getTopArtist(spotifyAccessToken, timeline);
                     Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Artist", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
@@ -981,6 +1418,93 @@ dd
     ─▀▀▀▄▄ █──█ █──█ ──█── ▀█▀ █▀▀ █▄▄█ 　 ░█▄▄█ ░█─░█ ─░█── ░█▀▀█
     ░█▄▄▄█ █▀▀▀ ▀▀▀▀ ──▀── ▀▀▀ ▀── ▄▄▄█ 　 ░█─░█ ─▀▄▄▀ ─░█── ░█─░█
      */
+
+    // Store the Spoitfy Information Inside the User Account
+    private void storeWrapDataInFirebaseUser(Wrap wrap) {
+        // Convert Wrap object to JSON object
+        JSONObject wrapJson = wrapToJson(wrap);
+
+        // Get the current user's Firebase authentication ID
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Get reference to the user's wraps node
+            DatabaseReference wrapsRef = FirebaseDatabase.getInstance().getReference()
+                    .child("Users").child(userId).child("Wraps");
+
+            // Check if the same wrap already exists for the user
+            wrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    boolean wrapExists = false;
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String existingWrapJson = snapshot.getValue(String.class);
+                        if (existingWrapJson != null && existingWrapJson.equals(wrapJson.toString())) {
+                            // Same wrap already exists
+                            wrapExists = true;
+                            break;
+                        }
+                    }
+                    if (!wrapExists) {
+                        // Generate a unique ID for the new wrap
+                        String wrapId = wrapsRef.push().getKey();
+
+                        // Store the new wrap under the user's wraps node with the unique ID
+                        wrapsRef.child(wrapId).setValue(wrapJson.toString())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // Data successfully stored in Firebase
+                                        Log.d("Firebase", "Wrap data stored successfully");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Handle failure to store data in Firebase
+                                        Log.e("Firebase", "Failed to store wrap data: " + e.getMessage());
+                                    }
+                                });
+                    } else {
+                        // Wrap already exists, do not add it again
+                        Log.d("Firebase", "Wrap already exists for the user");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle database error
+                    Log.e("Firebase", "Database error: " + databaseError.getMessage());
+                }
+            });
+        }
+    }
+
+    private JSONObject wrapToJson(Wrap wrap) {
+        JSONObject wrapJson = new JSONObject();
+        JSONArray topTracksArray = new JSONArray();
+        try {
+            // Convert topTracks list to JSON array
+            for (TrackInfo track : wrap.getTopTracks()) {
+                JSONObject trackJson = new JSONObject();
+                trackJson.put("trackName", track.getTrackName());
+                trackJson.put("artistName", track.getArtistName());
+                trackJson.put("albumName", track.getAlbumName());
+                trackJson.put("trackUrl", track.getTrackUrl());
+                topTracksArray.put(trackJson);
+            }
+
+            // Add topTracks array and other properties to wrap JSON object
+            wrapJson.put("topTracks", topTracksArray);
+            wrapJson.put("topAlbum", wrap.getTopAlbum());
+            wrapJson.put("topArtist", wrap.getTopArtist());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return wrapJson;
+    }
+
     public void getToken() {
         final AuthorizationRequest request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN);
         AuthorizationClient.openLoginActivity(firebaseUserManager.this, AUTH_TOKEN_REQUEST_CODE, request);

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+
 public class WrapAdapter extends ArrayAdapter<Wrap> {
 
     public WrapAdapter(Context context, ArrayList<Wrap> wraps) {
@@ -26,9 +27,7 @@ public class WrapAdapter extends ArrayAdapter<Wrap> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_wrap, parent, false);
         }
         TextView textView = convertView.findViewById(R.id.text_view_wrap);
-        if (wrap != null && wrap.getSongName() != null) {
-            textView.setText(wrap.getSongName());
-        }
+
         return convertView;
     }
 }

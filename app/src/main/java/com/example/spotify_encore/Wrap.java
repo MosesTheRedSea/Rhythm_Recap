@@ -1,26 +1,54 @@
 package com.example.spotify_encore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Wrap {
-    private String songName;
-    private String artistName;
-    private String albumName;
+    private List<TrackInfo> topTracks;
+    private String topAlbum;
+    private String topArtist;
 
-    public Wrap(String songName, String albumName, String artistName) {
-        this.songName = songName;
-        this.artistName = artistName;
-        this.albumName = albumName;
+    public Wrap() {
+        topTracks = new ArrayList<>();
     }
 
-    public String getSongName() {
-        return songName;
+    public List<TrackInfo> getTopTracks() {
+        return topTracks;
     }
 
-    public String getArtistName() {
-        return artistName;
+    public void setTopTracks(List<TrackInfo> topTracks) {
+        this.topTracks = topTracks;
     }
 
-    public String getAlbumName() {
-        return albumName;
+    public String getTopAlbum() {
+        return topAlbum;
+    }
+
+    public void setTopAlbum(String topAlbum) {
+        this.topAlbum = topAlbum;
+    }
+
+    public String getTopArtist() {
+        return topArtist;
+    }
+
+    public void setTopArtist(String topArtist) {
+        this.topArtist = topArtist;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Top Tracks:\n");
+        for (TrackInfo track : topTracks) {
+            sb.append("Track Name: ").append(track.getTrackName()).append("\n");
+            sb.append("Artist Name: ").append(track.getArtistName()).append("\n");
+            sb.append("Album Name: ").append(track.getAlbumName()).append("\n");
+            sb.append("Track URL: ").append(track.getTrackUrl()).append("\n");
+            sb.append("\n");
+        }
+        sb.append("Top Album: ").append(topAlbum).append("\n");
+        sb.append("Top Artist: ").append(topArtist).append("\n");
+        return sb.toString();
     }
 
 }
