@@ -130,7 +130,13 @@ import okhttp3.Response;
 
 
 public class game extends AppCompatActivity {
-    private AppCompatButton checkWinner;
+    AppCompatButton submitAnswer;
+    AppCompatButton playAgain;
+
+    
+
+
+
     private ImageView gameImage;
     private EditText guessSongEdit;
     private TextView songText;
@@ -139,16 +145,12 @@ public class game extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.game);
 
 
-                    .build();
 
 
-//        editText = findViewById(R.id.id_edit_text);
-//        position = findViewById(R.id.edit_text_position);
-//        loadTasksFromPrefs();
-//        title = findViewById(R.id.todo_list_title);
     }
 
 

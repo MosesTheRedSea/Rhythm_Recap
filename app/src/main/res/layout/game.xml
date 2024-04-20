@@ -19,24 +19,40 @@
 
     <TextView
         android:id="@+id/songText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Guess The Name of The Song!!!!"
+        android:layout_width="357dp"
+        android:layout_height="109dp"
         android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.659"
+        app:layout_constraintHorizontal_bias="0.703"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.453" />
+
+    <TextView
+        android:id="@+id/scoreTracker"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Score : 0"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.317" />
 
     <EditText
         android:id="@+id/guessSongEdit"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="                Guess Here!!               "
+        android:text="Answer here..."
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -64,17 +80,19 @@
 
     <TextView
         android:id="@+id/gameDirectionsText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Guess The Name of The Song!!!!"
+        android:text="Song Guesser"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.177" />
+        app:layout_constraintVertical_bias="0.199" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/checkIfYouWinButton"
@@ -82,8 +100,10 @@
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="64dp"
-        android:background="@drawable/profile_actions_background"
-        android:text="Check"
+        android:background="@drawable/submit_button"
+        android:onClick="check"
+        android:text="Submit"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -92,8 +112,27 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.736"
-        android:onClick="check"/>
+        app:layout_constraintVertical_bias="0.716" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/playAgainButton"
+        style="@android:style/Widget.Button"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/play_again_button"
+        android:onClick="check"
+        android:text="Play Again"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.835" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -124,7 +163,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.025"
         app:srcCompat="@drawable/game_image" />
 
 

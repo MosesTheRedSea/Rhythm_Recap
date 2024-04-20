@@ -154,6 +154,8 @@ public class firebaseUserManager extends AppCompatActivity {
     private EditText changePassword;
     private EditText oldEmail;
     private EditText oldPassword;
+
+    AppCompatButton playButton;
     FirebaseAuth auth;
     AppCompatButton signOut;
     AppCompatButton changeInfo;
@@ -220,8 +222,13 @@ public class firebaseUserManager extends AppCompatActivity {
     TextView viewSumArtist;
 
     private MediaPlayer mediaPlayer;
+    private MediaPlayer summaryMediaPlayer;
     private Queue<String> trackUrls;
 
+    Queue<String> urlTracks;
+
+    List<JSONObject> wrapsJsonList;
+    private int currentIndex = 0;
 
     private void deleteUserAccount(FirebaseUser user) {
         user.delete()
@@ -445,6 +452,7 @@ public class firebaseUserManager extends AppCompatActivity {
                 } else if (action.equals("homepage")) {
                     // Set content view to homepage layout
                     setContentView(R.layout.homepage);
+
                     reccomendationButton = findViewById(R.id.recommendationsButton);
                     reccomendationButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -532,10 +540,8 @@ public class firebaseUserManager extends AppCompatActivity {
                     });
                 } else if (action.equals("recommendations")) {
                     setContentView(R.layout.recomendations);
-
                     goHomeButton = findViewById(R.id.returnhomeButt);
                     generateReccomendation = findViewById(R.id.generateReccoButton);
-
                     userReccomendation = findViewById(R.id.recommendationsListView);
 
                     List<String> testData = new ArrayList<>();
@@ -543,7 +549,6 @@ public class firebaseUserManager extends AppCompatActivity {
                     userReccomendation.setAdapter(adapter);
                     adapter.setRecommendedTracks(testData); // Notify the adapter that the dataset has changed
                     adapter.notifyDataSetChanged();
-
                     generateReccomendation.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -566,34 +571,27 @@ public class firebaseUserManager extends AppCompatActivity {
                     topTrackText = findViewById(R.id.topTrackTextT);
                     topArtistText = findViewById(R.id.topArtistTextT);
                     topAlbumText = findViewById(R.id.topAlbumTextT);
-
                     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sort_options, android.R.layout.simple_spinner_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spotifySum = findViewById(R.id.summarSelect);
                     spotifySum.setAdapter(adapter);
-
                     sumGoHome = findViewById(R.id.sumHomeButt);
-
                     generateSummary = findViewById(R.id.generateSummary);
                     generateSummary.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // Get the selected option from the spinner
                             String selectedOption = spotifySum.getSelectedItem().toString();
-
                             // Call the method to generate summary based on the selected option
                             switch (selectedOption) {
                                 case "1 Week":
                                     retrieveSpotifyAccessTokenAndGetTopItems("short_term");
-
                                     break;
                                 case "1 Month":
                                     retrieveSpotifyAccessTokenAndGetTopItems("medium_term");
-
                                     break;
                                 case "1 Year":
                                     retrieveSpotifyAccessTokenAndGetTopItems("long_term");
-
                                     break;
                                 default:
                                     // Handle default case or do nothing
@@ -613,26 +611,260 @@ public class firebaseUserManager extends AppCompatActivity {
                     });
 
                 } else if (action.equals("view_summary")) {
+                    // Set the Screen View
+                    int index = 0;
                     setContentView(R.layout.view_summaries);
-
                     previousButton = findViewById(R.id.viewPrevious);
                     nextButton = findViewById(R.id.viewNextSummary);
-
                     viewSumTracks = findViewById(R.id.topTrackText);
                     viewSumAlbum = findViewById(R.id.topAlbumText);
                     viewSumArtist = findViewById(R.id.topArtistText);
+                    wrapsJsonList = new ArrayList<>();
+                    urlTracks = new LinkedList<>();
 
+                    if (user != null) {
+                        String userId = user.getUid();
+                        DatabaseReference userWrapsRef = FirebaseDatabase.getInstance().getReference()
+                                .child("users").child(userId).child("Wraps");
 
+                        userWrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    String wrapJsonString = snapshot.getValue(String.class);
+                                    try {
+                                        JSONObject wrapJson = new JSONObject(wrapJsonString);
+                                        wrapsJsonList.add(wrapJson);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        // Handle JSON parsing error
+                                    }
+                                }
+                                // Now you have a list of JSONObject wrapsJsonList containing all wraps
+                                // You can further process these wraps as needed
+                                // For example, you can convert them back to Wrap objects
+                                //printWraps(wrapsJsonList);
+                                Log.d("Data", wrapsJsonList.get(0).toString());
+                                printWraps(wrapsJsonList);
+                                displayTrack(currentIndex);
+                                Log.d("URL", urlTracks.toString());
+                                playSummaryTracks();
+                            }
 
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle database error
+                                Log.e("Firebase", "Database error: " + databaseError.getMessage());
+                            }
+                        });
+                    }
 
+                    nextButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (currentIndex < wrapsJsonList.size() - 1) {
+                                currentIndex++;
+                                displayTrack(currentIndex);
+                                Log.d("URL", urlTracks.toString());
+                                playSummaryTracks();
+                            } else {
+                                // Handle when user reaches end of track list
+                                Toast.makeText(firebaseUserManager.this, "End of tracks", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
-
+                    previousButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (currentIndex > 0) {
+                                currentIndex--;
+                                displayTrack(currentIndex);
+                                Log.d("URL", urlTracks.toString());
+                                playSummaryTracks();
+                            } else {
+                                // Handle when user reaches beginning of track list
+                                Toast.makeText(firebaseUserManager.this, "Beginning of tracks", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         }
     }
 
+    private void displayTrack(int index) {
+        if (!urlTracks.isEmpty()) {
+            urlTracks = new LinkedList<>();
+        }
+        try {
+            StringBuilder topTrack = new StringBuilder();
+            StringBuilder topArtist = new StringBuilder();
+            JSONObject wrapJson = wrapsJsonList.get(index);
 
+            JSONArray topTracksArray = wrapJson.getJSONArray("topTracks");
+            JSONArray topArtistsArray = wrapJson.getJSONArray("topArtists");
+            String topAlbum = wrapJson.getString("topAlbum");
+
+            for (int i = 0; i < topTracksArray.length(); i++) {
+                JSONObject trackJson = topTracksArray.getJSONObject(i);
+                String trackName = trackJson.getString("trackName");
+                String artistName = trackJson.getString("artistName");
+                String albumName = trackJson.getString("albumName");
+                String trackUrl = trackJson.getString("trackUrl");
+                urlTracks.add(trackUrl);
+
+                topTrack.append(trackName).append(" : ").append(artistName).append("\n");
+            }
+
+            for (int i =- 0; i < topArtistsArray.length(); i++) {
+                String artistName = topArtistsArray.getString(i);
+                topArtist.append(artistName).append("\n");
+            }
+
+            // Update TextViews with track information
+            viewSumTracks.setText(topTrack);
+            viewSumArtist.setText(topArtist);
+            viewSumAlbum.setText(topAlbum);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Just for testing purposes
+    private void printWraps(List<JSONObject> wrapsJsonList) {
+        for (JSONObject wrapJson : wrapsJsonList) {
+            try {
+                // Extract data from the wrap JSON object
+                JSONArray topTracksArray = wrapJson.getJSONArray("topTracks");
+                JSONArray topArtistsArray = wrapJson.getJSONArray("topArtists");
+                String topAlbum = wrapJson.getString("topAlbum");
+
+                // Log the wrap data
+                Log.d("WrapData", "Top Tracks:");
+                for (int i = 0; i < topTracksArray.length(); i++) {
+                    JSONObject trackJson = topTracksArray.getJSONObject(i);
+                    String trackName = trackJson.getString("trackName");
+                    String artistName = trackJson.getString("artistName");
+                    String albumName = trackJson.getString("albumName");
+                    String trackUrl = trackJson.getString("trackUrl");
+
+                    Log.d("WrapData", "Track Name: " + trackName);
+                    Log.d("WrapData", "Artist Name: " + artistName);
+                    Log.d("WrapData", "Album Name: " + albumName);
+                    Log.d("WrapData", "Track URL: " + trackUrl);
+                    Log.d("WrapData", "");
+                }
+
+                Log.d("WrapData", "Top Artists:");
+                for (int i = 0; i < topArtistsArray.length(); i++) {
+                    String artistName = topArtistsArray.getString(i);
+                    Log.d("WrapData", artistName);
+                }
+
+                Log.d("WrapData", "Top Album: " + topAlbum);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                // Handle JSON parsing error
+            }
+        }
+    }
+
+    private void playTrack(String trackUrl) {
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(trackUrl);
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    playNextTrack(); // Play the next track when current track completes
+                }
+            });
+            mediaPlayer.prepareAsync(); // Prepare asynchronously to avoid blocking the main thread
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaPlayer.start(); // Start playback when media is prepared
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle error while setting data source or preparing media
+        }
+    }
+
+    private void playNextTrack() {
+        if (!trackUrls.isEmpty()) {
+            String nextTrackUrl = trackUrls.poll(); // Get and remove the first track URL from the queue
+            playTrack(nextTrackUrl); // Play the next track
+        } else {
+            // No more tracks to play, release MediaPlayer resources
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        }
+    }
+
+
+    private void playTracks(Wrap wrap) {
+        if (wrap != null && wrap.getTopTracks() != null && wrap.getTopTracks().size() >= 5) {
+            // Populate the list of track URLs (trackUrls) before calling this method
+            trackUrls = new LinkedList<>();
+            for (TrackInfo track : wrap.getTopTracks()) {
+                trackUrls.offer(track.getTrackUrl()); // Add track URLs to the queue
+            }
+        }
+        // Start playing the first track
+        playNextTrack();
+    }
+
+
+    private void playSummaryTrack(String trackUrl) {
+        try {
+            summaryMediaPlayer = new MediaPlayer();
+            summaryMediaPlayer.setDataSource(trackUrl);
+            summaryMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    playNextSummaryTrack(); // Play the next track when current track completes
+                }
+            });
+            summaryMediaPlayer.prepareAsync(); // Prepare asynchronously to avoid blocking the main thread
+            summaryMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    summaryMediaPlayer.start(); // Start playback when media is prepared
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle error while setting data source or preparing media
+        }
+    }
+
+
+    private void playNextSummaryTrack() {
+        if (!urlTracks.isEmpty()) {
+            String nextTrackURL = urlTracks.poll();
+            playSummaryTrack(nextTrackURL);
+        } else {
+            if (summaryMediaPlayer != null) {
+                summaryMediaPlayer.release();
+                summaryMediaPlayer = null;
+            }
+        }
+    }
+
+    private void playSummaryTracks() {
+        if (trackUrls != null && trackUrls.size() >= 5) {
+            for (String track : trackUrls) {
+                trackUrls.offer(track); // Add track URLs to the queue
+            }
+        }
+        playNextSummaryTrack();
+    }
 
 
 
@@ -685,6 +917,11 @@ public class firebaseUserManager extends AppCompatActivity {
     ░█▄▄█ ─▀▄▄▀ ─░█── ─░█── ░█▄▄▄█ ░█──▀█ 　 ░█▄▄█ ░█▄▄█ ▄█▄ ░█▄▄█ ░█─░█ ░█▄▄▄█
      */
 
+    public void playButtonClick(View view) {
+        Intent sign = new Intent(this, game.class);
+        startActivity(sign);
+        finish();
+    }
     public void profileButtonClick(View view) {
         Intent sign = new Intent(this, firebaseUserManager.class);
         String authentication = "profile";
@@ -820,53 +1057,6 @@ public class firebaseUserManager extends AppCompatActivity {
 
     }
 
-    private void playTrack(String trackUrl) {
-        try {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(trackUrl);
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    playNextTrack(); // Play the next track when current track completes
-                }
-            });
-            mediaPlayer.prepareAsync(); // Prepare asynchronously to avoid blocking the main thread
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mediaPlayer.start(); // Start playback when media is prepared
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle error while setting data source or preparing media
-        }
-    }
-
-    private void playNextTrack() {
-        if (!trackUrls.isEmpty()) {
-            String nextTrackUrl = trackUrls.poll(); // Get and remove the first track URL from the queue
-            playTrack(nextTrackUrl); // Play the next track
-        } else {
-            // No more tracks to play, release MediaPlayer resources
-            if (mediaPlayer != null) {
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-        }
-    }
-
-    private void playTracks(Wrap wrap) {
-        if (wrap != null && wrap.getTopTracks() != null && wrap.getTopTracks().size() >= 5) {
-            // Populate the list of track URLs (trackUrls) before calling this method
-            trackUrls = new LinkedList<>();
-            for (TrackInfo track : wrap.getTopTracks()) {
-                trackUrls.offer(track.getTrackUrl()); // Add track URLs to the queue
-            }
-        }
-        // Start playing the first track
-        playNextTrack();
-    }
 
 
 
@@ -1505,7 +1695,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
             // Get reference to the user's wraps node
             DatabaseReference wrapsRef = FirebaseDatabase.getInstance().getReference()
-                    .child("Users").child(userId).child("Wraps");
+                    .child("users").child(userId).child("Wraps");
 
             // Check if the same wrap already exists for the user
             wrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {

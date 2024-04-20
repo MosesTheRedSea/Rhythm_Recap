@@ -50,8 +50,8 @@
 
     <TextView
         android:id="@+id/topAlbumText"
-        android:layout_width="405dp"
-        android:layout_height="63dp"
+        android:layout_width="411dp"
+        android:layout_height="49dp"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -59,10 +59,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.803" />
+        app:layout_constraintVertical_bias="0.886" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -96,8 +96,8 @@
 
     <TextView
         android:id="@+id/topArtistText"
-        android:layout_width="405dp"
-        android:layout_height="63dp"
+        android:layout_width="414dp"
+        android:layout_height="135dp"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -105,9 +105,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.658" />
+        app:layout_constraintVertical_bias="0.738" />
 
     <TextView
         android:id="@+id/topArtist"
@@ -123,6 +124,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.582" />
 
+
     <TextView
         android:id="@+id/TopAlbum"
         android:layout_width="wrap_content"
@@ -135,8 +137,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.721" />
-
+        app:layout_constraintVertical_bias="0.819" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/viewSumGoHome"
