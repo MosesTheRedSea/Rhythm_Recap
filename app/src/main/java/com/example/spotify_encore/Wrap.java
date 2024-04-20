@@ -5,15 +5,21 @@ import java.util.List;
 
 public class Wrap {
     private List<TrackInfo> topTracks;
+    private List<String> topArtists;
     private String topAlbum;
     private String topArtist;
 
     public Wrap() {
         topTracks = new ArrayList<>();
+        topArtists = new ArrayList<>();
     }
 
     public List<TrackInfo> getTopTracks() {
         return topTracks;
+    }
+
+    public List<String> getTopArtists() {
+        return topArtists;
     }
 
     public void setTopTracks(List<TrackInfo> topTracks) {

@@ -31,7 +31,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.435" />
+        app:layout_constraintVertical_bias="0.409" />
 
     <TextView
         android:id="@+id/TopTrack"
@@ -46,12 +46,12 @@
         app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.311" />
+        app:layout_constraintVertical_bias="0.289" />
 
     <TextView
         android:id="@+id/topAlbumTextT"
-        android:layout_width="405dp"
-        android:layout_height="63dp"
+        android:layout_width="395dp"
+        android:layout_height="46dp"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -59,10 +59,9 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.803" />
+        app:layout_constraintVertical_bias="0.903" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -96,8 +95,8 @@
 
     <TextView
         android:id="@+id/topArtistTextT"
-        android:layout_width="405dp"
-        android:layout_height="63dp"
+        android:layout_width="399dp"
+        android:layout_height="159dp"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -107,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.658" />
+        app:layout_constraintVertical_bias="0.746" />
 
     <TextView
         android:id="@+id/topArtist"
@@ -121,7 +120,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.582" />
+        app:layout_constraintVertical_bias="0.56" />
 
     <TextView
         android:id="@+id/TopAlbum"
@@ -133,9 +132,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.721" />
+        app:layout_constraintVertical_bias="0.839" />
 
     <Spinner
         android:id="@+id/summarSelect"

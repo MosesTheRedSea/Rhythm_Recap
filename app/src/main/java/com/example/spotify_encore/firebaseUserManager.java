@@ -47,6 +47,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -76,7 +77,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
+import com.spotify.android.appremote.*;
 
 
 
@@ -114,6 +118,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Queue;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -209,6 +214,10 @@ public class firebaseUserManager extends AppCompatActivity {
     TextView viewSumAlbum;
 
     TextView viewSumArtist;
+
+    private MediaPlayer mediaPlayer;
+    private Queue<String> trackUrls;
+
 
     private void deleteUserAccount(FirebaseUser user) {
         user.delete()
@@ -763,7 +772,7 @@ public class firebaseUserManager extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 // Call getTopArtist API after getTopTracks completes
-                getTopArtist(spotifyAccessToken, timeline, wrap, new ApiCallback() {
+                getTopArtists(spotifyAccessToken, timeline, wrap, new ApiCallback() {
                     @Override
                     public void onSuccess() {
                         // Both API calls have completed, wrap object is fully populated
@@ -773,7 +782,7 @@ public class firebaseUserManager extends AppCompatActivity {
                         storeWrapDataInFirebaseUser(wrap);
 
                         // Here I can play the Top 5 Song Previews
-                        playTrackPreviews(wrap);
+                        playTracks(wrap);
 
                     }
 
@@ -796,6 +805,58 @@ public class firebaseUserManager extends AppCompatActivity {
 
     }
 
+    private void playTrack(String trackUrl) {
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(trackUrl);
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    playNextTrack(); // Play the next track when current track completes
+                }
+            });
+            mediaPlayer.prepareAsync(); // Prepare asynchronously to avoid blocking the main thread
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaPlayer.start(); // Start playback when media is prepared
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle error while setting data source or preparing media
+        }
+    }
+
+    private void playNextTrack() {
+        if (!trackUrls.isEmpty()) {
+            String nextTrackUrl = trackUrls.poll(); // Get and remove the first track URL from the queue
+            playTrack(nextTrackUrl); // Play the next track
+        } else {
+            // No more tracks to play, release MediaPlayer resources
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        }
+    }
+
+    private void playTracks(Wrap wrap) {
+        if (wrap != null && wrap.getTopTracks() != null && wrap.getTopTracks().size() >= 5) {
+            // Populate the list of track URLs (trackUrls) before calling this method
+            trackUrls = new LinkedList<>();
+            for (TrackInfo track : wrap.getTopTracks()) {
+                trackUrls.offer(track.getTrackUrl()); // Add track URLs to the queue
+            }
+        }
+        // Start playing the first track
+        playNextTrack();
+    }
+
+
+
+
+    /*
     private void playTrackPreviews(Wrap wrap) {
         // Check if wrap object contains any tracks
         if (wrap != null && wrap.getTopTracks() != null && wrap.getTopTracks().size() >= 5) {
@@ -827,8 +888,10 @@ public class firebaseUserManager extends AppCompatActivity {
             System.out.println("Cannot Play Tracks - There are none");
         }
     }
+     */
 
     private void getTopTracks(String spotifyAccessToken, String timeline, Wrap wrap, ApiCallback callback) {
+
         OkHttpClient client = new OkHttpClient();
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/tracks").newBuilder();
@@ -911,12 +974,11 @@ public class firebaseUserManager extends AppCompatActivity {
         });
     }
 
-    private void getTopArtist(String spotifyAccessToken, String timeline, Wrap wrap, ApiCallback callback) {
+    private void getTopArtists(String spotifyAccessToken, String timeline, Wrap wrap, ApiCallback callback) {
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.spotify.com/v1/me/top/artists").newBuilder();
         urlBuilder.addQueryParameter("time_range", timeline);
-        urlBuilder.addQueryParameter("limit", "10");
-        urlBuilder.addQueryParameter("offset", "0");
+        urlBuilder.addQueryParameter("limit", "5"); // Limit changed to 5 for top 5 artists
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -930,13 +992,6 @@ public class firebaseUserManager extends AppCompatActivity {
                 e.printStackTrace();
                 // Handle request failure
                 // For example, update UI to display an error message
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Display error message on UI
-                        topArtistText.setText("Failed to fetch top artists. Please try again later.");
-                    }
-                });
                 callback.onFailure("Failed to fetch top artists: " + e.getMessage());
             }
 
@@ -954,34 +1009,29 @@ public class firebaseUserManager extends AppCompatActivity {
                     JSONArray artists = jsonResponse.getJSONArray("items");
 
                     if (artists.length() > 0) {
-                        JSONObject firstArtist = artists.getJSONObject(0);
-                        String artistName = firstArtist.getString("name");
-
+                        // Initialize StringBuilder to build the artist names
+                        StringBuilder topArtistsInfo = new StringBuilder();
+                        for (int i = 0; i < artists.length(); i++) {
+                            JSONObject artist = artists.getJSONObject(i);
+                            String artistName = artist.getString("name");
+                            // Append artist name to the StringBuilder
+                            topArtistsInfo.append(artistName).append("\n");
+                            // Set top artists in wrap
+                            wrap.getTopArtists().add(artistName);
+                        }
                         // Update UI with the top artist information
-                        final String topArtistInfo = artistName;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                String output = "";
-                                topArtistText.setText(topArtistInfo);
+                                topArtistText.setText(topArtistsInfo.toString());
                             }
                         });
-                        // Set top artist in wrap
-                        wrap.setTopArtist(artistName);
                         callback.onSuccess();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    // Handle JSON parsing error
-                    // For example, update UI to display an error message
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Display error message on UI
-                            topArtistText.setText("Failed to parse response. Please try again later.");
-                        }
-                    });
-                    callback.onFailure("Error parsing top artist response: " + e.getMessage());
+
+                    callback.onFailure("Error parsing top artists response: " + e.getMessage());
                 }
             }
         });
@@ -1380,7 +1430,7 @@ public class firebaseUserManager extends AppCompatActivity {
                     // Use the retrieved Spotify access token to make the getTopTracks API call
                     //getTopTrack(spotifyAccessToken);
                     displayTopTracksAndArtist(spotifyAccessToken, timeline);
-                    Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Tracks", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(firebaseUserManager.this, "Retrieved Spotify Token For Top Info", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle the case where no Spotify access token was found
                     Toast.makeText(firebaseUserManager.this, "No Spotify access token found", Toast.LENGTH_SHORT).show();
@@ -1502,8 +1552,15 @@ public class firebaseUserManager extends AppCompatActivity {
                 topTracksArray.put(trackJson);
             }
 
-            // Add topTracks array and other properties to wrap JSON object
+            // Convert topArtists list to JSON array
+            JSONArray topArtistsArray = new JSONArray();
+            for (String artist : wrap.getTopArtists()) {
+                topArtistsArray.put(artist);
+            }
+
+            // Add topTracks array, topArtists array, and other properties to wrap JSON object
             wrapJson.put("topTracks", topTracksArray);
+            wrapJson.put("topArtists", topArtistsArray);
             wrapJson.put("topAlbum", wrap.getTopAlbum());
             wrapJson.put("topArtist", wrap.getTopArtist());
         } catch (JSONException e) {
