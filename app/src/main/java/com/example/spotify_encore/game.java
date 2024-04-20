@@ -136,7 +136,7 @@ public class game extends AppCompatActivity {
     FirebaseUser user;
     FirebaseDatabase FdataBase;
     String userID;
-    List<JSONObject> wrapsJsonList;
+    List<JSONObject> wrapsJsonList2;
     List<String> trackQuestions;
     List<String> artistAnswers;
     TextView playerScore;
@@ -168,8 +168,7 @@ public class game extends AppCompatActivity {
         songText = findViewById(R.id.songText);
         guessSongEdit = findViewById(R.id.guessSongEdit);
         submitAnswer = findViewById(R.id.checkIfYouWinButton);
-        playAgainButton = findViewById(R.id.playAgainButton);
-        wrapsJsonList = new ArrayList<>();
+        wrapsJsonList2 = new ArrayList<>();
         trackQuestions = new ArrayList<>();
         artistAnswers = new ArrayList<>();
 
@@ -196,7 +195,7 @@ public class game extends AppCompatActivity {
                     try {
                         JSONObject wrapJson = new JSONObject(wrapJsonString);
                         // wrapsJsonList.add(wrapJson);
-                        wrapsJsonList.add(wrapJson);
+                        wrapsJsonList2.add(wrapJson);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         // Handle JSON parsing error
@@ -218,10 +217,10 @@ public class game extends AppCompatActivity {
 
     private void populateInfo() {
         try {
-            for (int k = 0; k < wrapsJsonList.size(); ++k) {
+            for (int k = 0; k < wrapsJsonList2.size(); ++k) {
                 StringBuilder topTrack = new StringBuilder();
                 StringBuilder topArtist = new StringBuilder();
-                JSONObject wrapJson = wrapsJsonList.get(k);
+                JSONObject wrapJson = wrapsJsonList2.get(k);
 
                 JSONArray topTracksArray = wrapJson.getJSONArray("topTracks");
                 JSONArray topArtistsArray = wrapJson.getJSONArray("topArtists");

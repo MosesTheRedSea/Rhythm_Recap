@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.service.autofill.UserData;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -180,8 +181,6 @@ public class firebaseUserManager extends AppCompatActivity {
     AppCompatButton exportButton;
      AppCompatButton checkWinner;
      ImageView gameImage;
-     EditText guessSongEdit;
-     TextView songText;
      TextView gameDirectionsText;
 
     AppCompatButton sumGoHome;
@@ -231,6 +230,22 @@ public class firebaseUserManager extends AppCompatActivity {
 
     List<JSONObject> wrapsJsonList;
     private int currentIndex = 0;
+
+    // Game Items
+
+    List<JSONObject> wrapsJsonList2;
+    List<String> trackQuestions;
+    List<String> artistAnswers;
+    TextView playerScore;
+    EditText guessSongEdit;
+    TextView songText;
+
+    AppCompatButton submitButotn;
+
+    boolean currentGame = false;
+    int playerScoreValue;
+
+    int currentQuestionIndex;
 
     /*
     private void deleteUserAccount(FirebaseUser user) {
@@ -335,33 +350,117 @@ public class firebaseUserManager extends AppCompatActivity {
 
      */
 
-    private void deleteUserAccount(String userId) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
-        // Delete Spotify access token
-        userRef.child("spotifyAccessToken").removeValue();
 
-        // Delete wraps
-        DatabaseReference wrapsRef = userRef.child("Wraps");
-        wrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot wrapSnapshot : dataSnapshot.getChildren()) {
-                    wrapSnapshot.getRef().removeValue(); // Delete each wrap
+    private void deleteUserAccount(String userId, String email, String password) {
+
+// Step 1: Delete the user's data from the "Wraps" node
+        DatabaseReference wrapsRef = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(userId).child("Wraps");
+        wrapsRef.removeValue();
+
+// Step 2: Delete the user's Spotify access token
+        DatabaseReference accessTokenRef = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(userId).child("spotifyAccessToken");
+        accessTokenRef.removeValue();
+
+// Step 3: Delete the user's data from the "users" node
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(userId);
+        userRef.removeValue();
+
+
+        if (user != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+
+            // Re-authenticate the user
+            user.reauthenticate(credential)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Re-authentication successful, now delete the user account
+                            user.delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // User account deleted successfully
+                                            Log.d("Firebase", "User account deleted successfully");
+                                            Intent intent = new Intent(getApplicationContext(), firebaseUserManager.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Handle failure to delete user account
+                                            Log.e("Firebase", "Error deleting user account: " + e.getMessage());
+                                        }
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Handle re-authentication failure
+                            Log.e("Firebase", "Re-authentication failed", e);
+                        }
+                    });
+        } else {
+            // User is not logged in
+            Log.e("Firebase", "User is not logged in");
+        }
+
+        /*
+        if (!password.isEmpty()) {
+            // Re-authenticate the user if they have been logged in for a while
+            if (currentUser != null) {
+                if (currentUser.isEmailVerified()) {
+                    // Re-authenticate the user
+                    AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+
+                    currentUser.reauthenticate(credential)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> reauthTask) {
+                                    if (reauthTask.isSuccessful()) {
+                                        // Re-authentication successful, now delete the account
+                                        currentUser.delete()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // Account deletion successful
+                                                        Log.d("Firebase", "User account deleted successfully");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        // Handle failure to delete user account
+                                                        Log.e("Firebase", "Error deleting user account: " + e.getMessage());
+                                                    }
+                                                });
+                                    } else {
+                                        // Re-authentication failed
+                                        Log.e("Firebase", "Re-authentication failed", reauthTask.getException());
+                                        // Handle re-authentication failure
+                                    }
+                                }
+                            });
+                } else {
+                    // Email is not verified
+                    // Handle this case, such as by prompting the user to verify their email
                 }
-                // After deleting all wraps, remove the wraps node
-                wrapsRef.removeValue();
-
-                // Delete user account
-                userRef.removeValue();
+            } else {
+                // User is not logged in
+                // Handle this case, such as by prompting the user to log in
             }
+        }
+        */
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
-            }
-        });
     }
+
+
 
     // These are only outline methods they can be changed if needed
     @SuppressLint("CutPasteId")
@@ -424,7 +523,10 @@ public class firebaseUserManager extends AppCompatActivity {
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            deleteUserAccount(user.getUid());
+                            String email, password;
+                            email = changeUserEmail.getText().toString();
+                            password = oldPassword.getText().toString();
+                            deleteUserAccount(user.getUid(), email, password);
 
                         }
                     });
@@ -505,6 +607,59 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
+
+                } else if (action.equals("game_page")) {
+                    setContentView(R.layout.game);
+
+                    FdataBase = FirebaseDatabase.getInstance();
+                    auth = FirebaseAuth.getInstance();
+                    user = auth.getCurrentUser();
+                    userID = getIntent().getStringExtra("userId");
+
+                    playerScore = findViewById(R.id.scoreTracker);
+
+                    songText = findViewById(R.id.songText);
+
+                    guessSongEdit = findViewById(R.id.guessSongEdit);
+
+                    wrapsJsonList2 = new ArrayList<>();
+                    trackQuestions = new ArrayList<>();
+                    artistAnswers = new ArrayList<>();
+
+                    String userId = user.getUid();
+                    DatabaseReference userWrapsRef = FirebaseDatabase.getInstance().getReference()
+                            .child("users").child(userId).child("Wraps");
+                    userWrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String wrapJsonString = snapshot.getValue(String.class);
+                                try {
+                                    JSONObject wrapJson = new JSONObject(wrapJsonString);
+                                    // wrapsJsonList.add(wrapJson);
+                                    wrapsJsonList2.add(wrapJson);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    // Handle JSON parsing error
+                                }
+                            }
+                            populateInfo();
+                            playGame();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle database error
+                            Log.e("Firebase", "Database error: " + databaseError.getMessage());
+                        }
+                    });
+
+                    //setWrapsList();
+
+                    populateInfo();
+
+                    //playGame();
+
 
                 } else if (action.equals("profile")) {
                     setContentView(R.layout.profile);
@@ -709,6 +864,125 @@ public class firebaseUserManager extends AppCompatActivity {
                     });
                 }
             }
+        }
+    }
+
+    public void setWrapsList() {
+        String userId = user.getUid();
+        DatabaseReference userWrapsRef = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(userId).child("Wraps");
+        userWrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String wrapJsonString = snapshot.getValue(String.class);
+                    try {
+                        JSONObject wrapJson = new JSONObject(wrapJsonString);
+                        // wrapsJsonList.add(wrapJson);
+                        wrapsJsonList2.add(wrapJson);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        // Handle JSON parsing error
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+                Log.e("Firebase", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void populateInfo() {
+        try {
+            for (int k = 0; k < wrapsJsonList2.size(); ++k) {
+                StringBuilder topTrack = new StringBuilder();
+                StringBuilder topArtist = new StringBuilder();
+                JSONObject wrapJson = wrapsJsonList2.get(k);
+
+                JSONArray topTracksArray = wrapJson.getJSONArray("topTracks");
+                JSONArray topArtistsArray = wrapJson.getJSONArray("topArtists");
+                String topAlbum = wrapJson.getString("topAlbum");
+
+                for (int i = 0; i < topTracksArray.length(); i++) {
+
+                    JSONObject trackJson = topTracksArray.getJSONObject(i);
+
+                    String trackName = trackJson.getString("trackName");
+                    String artistName = trackJson.getString("artistName");
+
+                    Log.d("Track", trackName);
+                    Log.d("Artist", artistName);
+
+                    trackQuestions.add(trackName);
+                    artistAnswers.add(artistName);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void playGame() {
+        if (!currentGame) {
+            currentGame = true;
+            playerScoreValue = 0;
+            currentQuestionIndex = 0;
+            askNextQuestion();
+        } else {
+            Toast.makeText(this, "Game in progress", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void askNextQuestion() {
+        if (currentQuestionIndex < trackQuestions.size()) {
+            String currentQuestion = trackQuestions.get(currentQuestionIndex);
+            StringBuilder builder = new StringBuilder();
+            // Display current question
+            builder.append("Who is the artist of the song").append(" : ").append(currentQuestion);
+            songText.setText(builder.toString());
+
+        } else {
+            Intent sign = new Intent(this, firebaseUserManager.class);
+            String authentication = "homepage";
+            sign.putExtra("userAction", authentication);
+            startActivity(sign);
+            finish();
+        }
+    }
+
+    public void checkAnswer(View view) {
+        if (currentGame) {
+            String userAnswer = guessSongEdit.getText().toString().trim();
+            String correctAnswer = artistAnswers.get(currentQuestionIndex);
+
+            if (userAnswer.isEmpty()) {
+                Toast.makeText(this, "Submit an Answer", Toast.LENGTH_SHORT).show();
+            } else if (userAnswer.equalsIgnoreCase(correctAnswer)) {
+                // Correct answer, update score
+                playerScoreValue += 10;
+                // Move to the next question
+                currentQuestionIndex++;
+                // Check if there are more questions
+                playerScore.setText("Score : " + playerScoreValue);
+
+
+                if (currentQuestionIndex < trackQuestions.size()) {
+                    askNextQuestion();
+                } else {
+                    // All questions answered, display final message
+                    songText.setText("You Win! Final Score: " + playerScoreValue);
+                    // Optionally, reset the game for the next round
+                    // resetGame();
+                }
+            } else {
+                // Incorrect answer, display correct answer
+                Toast.makeText(this, "Incorrect answer", Toast.LENGTH_SHORT).show();
+            }
+            // Clear user input field
+            guessSongEdit.getText().clear();
         }
     }
 
@@ -937,7 +1211,9 @@ public class firebaseUserManager extends AppCompatActivity {
      */
 
     public void playButtonClick(View view) {
-        Intent sign = new Intent(this, game.class);
+        Intent sign = new Intent(this, firebaseUserManager.class);
+        String authentication = "game_page";
+        sign.putExtra("userAction", authentication);
         startActivity(sign);
         finish();
     }

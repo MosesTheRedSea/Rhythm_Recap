@@ -22,7 +22,7 @@
         android:layout_width="357dp"
         android:layout_height="109dp"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,17 +93,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.199" />
 
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/checkIfYouWinButton"
         style="@android:style/Widget.Button"
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="64dp"
-        android:background="@drawable/submit_button"
+        android:background="@drawable/play_again_button"
         android:onClick="checkAnswer"
         android:text="Submit"
-        android:textColor="@color/white"
         android:textAlignment="center"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -111,27 +112,7 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.716" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/playAgainButton"
-        style="@android:style/Widget.Button"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="64dp"
-        android:background="@drawable/play_again_button"
-        android:onClick="playAgain"
-        android:text="Play Again"
-        android:textColor="@color/white"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.835" />
+        app:layout_constraintVertical_bias="0.843" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"

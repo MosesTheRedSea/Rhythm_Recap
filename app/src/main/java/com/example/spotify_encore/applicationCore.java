@@ -51,7 +51,7 @@ public class applicationCore extends AppCompatActivity {
     private Call mCall;
     private TextView tokenTextView, codeTextView, profileTextView;
     private static final int SPLASH_SCREEN_TIMEOUT = 3000;
-    FirebaseAuth auth;
+    FirebaseAuth mAuth;
     FirebaseUser user;
 
     @Override
