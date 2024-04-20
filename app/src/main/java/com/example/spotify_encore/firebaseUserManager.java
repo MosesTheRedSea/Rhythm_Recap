@@ -170,7 +170,11 @@ public class firebaseUserManager extends AppCompatActivity {
     List<String> recommendedTracks;
     ArrayAdapter<String> adapter2;
     AppCompatButton exportButton;
-
+     AppCompatButton checkWinner;
+     ImageView gameImage;
+     EditText guessSongEdit;
+     TextView songText;
+     TextView gameDirectionsText;
 
     AppCompatButton sumGoHome;
 
@@ -453,8 +457,17 @@ public class firebaseUserManager extends AppCompatActivity {
                     });
 
                 } else if (action.equals("gamepage")) {
-                    // Set content view to gamepage layout
                     setContentView(R.layout.game);
+                    //balls
+
+
+                    checkWinner = findViewById(R.id.checkIfYouWinButton);
+                     gameImage = findViewById(R.id.gameImage);
+                     guessSongEdit = findViewById(R.id.guessSongEdit);
+                     songText = findViewById(R.id.songText);
+                     gameDirectionsText = findViewById(R.id.gameDirectionsText);
+
+
 
                 } else if (action.equals("profile")) {
                     setContentView(R.layout.profile);
@@ -539,6 +552,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
                 } else if (action.equals("create_summary")) {
                     setContentView(R.layout.create_summary);
+                    //balls
                     topTrackText = findViewById(R.id.topTrackTextT);
                     topArtistText = findViewById(R.id.topArtistTextT);
                     topAlbumText = findViewById(R.id.topAlbumTextT);
@@ -756,6 +770,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
     private void displayTopTracksAndArtist(String spotifyAccessToken, String timeline) {
         Wrap wrap = new Wrap();
+        //balls
 
         // Call getTopTracks API
         getTopTracks(spotifyAccessToken, timeline, wrap, new ApiCallback() {
@@ -821,6 +836,8 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
+    //balls
+
     private void getTopTracks(String spotifyAccessToken, String timeline, Wrap wrap, ApiCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
@@ -858,7 +875,7 @@ public class firebaseUserManager extends AppCompatActivity {
                         // Prepare StringBuilder to store the output
                         StringBuilder output = new StringBuilder();
                         StringBuilder albumText = new StringBuilder();
-
+                            //balls
                         // Loop through each top track
                         for (int i = 0; i < tracks.length(); i++) {
                             JSONObject topTrack = tracks.getJSONObject(i);
@@ -1819,4 +1836,16 @@ public class firebaseUserManager extends AppCompatActivity {
             // Permission denied
         }
     }
+
+
+
+
+
+    public void check(View view) {
+
+    }
 }
+
+
+
+
