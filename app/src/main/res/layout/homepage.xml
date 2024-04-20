@@ -113,7 +113,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/game_image" />
+            app:srcCompat="@drawable/game_image"
+            android:onClick="playButtonClick"/>
 
         <ImageView
             android:id="@+id/homeImageButton"

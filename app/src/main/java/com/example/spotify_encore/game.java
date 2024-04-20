@@ -127,36 +127,213 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
+import android.widget.Toast;
 
 public class game extends AppCompatActivity {
     AppCompatButton submitAnswer;
     AppCompatButton playAgain;
+    FirebaseAuth auth;
+    FirebaseUser user;
+    FirebaseDatabase FdataBase;
+    String userID;
+    List<JSONObject> wrapsJsonList;
+    List<String> trackQuestions;
+    List<String> artistAnswers;
+    TextView playerScore;
+    EditText guessSongEdit;
+    TextView songText;
 
+    AppCompatButton submitButotn;
 
+    boolean currentGame = false;
 
+    int playerScoreValue;
 
+    int currentQuestionIndex;
 
-    private ImageView gameImage;
-    private EditText guessSongEdit;
-    private TextView songText;
-    private TextView gameDirectionsText;
+    AppCompatButton playAgainButton;
 
 
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.game);
 
+        FdataBase = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        userID = getIntent().getStringExtra("userId");
+        playerScore = findViewById(R.id.scoreTracker);
+        songText = findViewById(R.id.songText);
+        guessSongEdit = findViewById(R.id.guessSongEdit);
+        submitAnswer = findViewById(R.id.checkIfYouWinButton);
+        playAgainButton = findViewById(R.id.playAgainButton);
+        wrapsJsonList = new ArrayList<>();
+        trackQuestions = new ArrayList<>();
+        artistAnswers = new ArrayList<>();
+
+        if (user != null) {
+
+            setWrapsList();
+            currentGame = true;
+            populateInfo();
+            playGame();
 
 
+        }
+    }
+
+    public void setWrapsList() {
+        String userId = user.getUid();
+        DatabaseReference userWrapsRef = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(userId).child("Wraps");
+        userWrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String wrapJsonString = snapshot.getValue(String.class);
+                    try {
+                        JSONObject wrapJson = new JSONObject(wrapJsonString);
+                        // wrapsJsonList.add(wrapJson);
+                        wrapsJsonList.add(wrapJson);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        // Handle JSON parsing error
+                    }
+                }
+
+                populateInfo();
+
+                playGame();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+                Log.e("Firebase", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void populateInfo() {
+        try {
+            for (int k = 0; k < wrapsJsonList.size(); ++k) {
+                StringBuilder topTrack = new StringBuilder();
+                StringBuilder topArtist = new StringBuilder();
+                JSONObject wrapJson = wrapsJsonList.get(k);
+
+                JSONArray topTracksArray = wrapJson.getJSONArray("topTracks");
+                JSONArray topArtistsArray = wrapJson.getJSONArray("topArtists");
+                String topAlbum = wrapJson.getString("topAlbum");
+
+                for (int i = 0; i < topTracksArray.length(); i++) {
+                    JSONObject trackJson = topTracksArray.getJSONObject(i);
+                    String trackName = trackJson.getString("trackName");
+                    String artistName = trackJson.getString("artistName");
+                    Log.d("Track", trackName);
+                    Log.d("Artist", artistName);
+                    trackQuestions.add(trackName);
+                    artistAnswers.add(artistName);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void playGame() {
+        if (!currentGame) {
+            currentGame = true;
+            playerScoreValue = 0;
+            currentQuestionIndex = 0;
+            askNextQuestion();
+        } else {
+            Toast.makeText(this, "Game in progress", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void askNextQuestion() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentQuestionIndex < trackQuestions.size()) {
+                    String currentQuestion = trackQuestions.get(currentQuestionIndex);
+                    StringBuilder builder = new StringBuilder();
+                    // Display current question
+                    builder.append("Who is the artist of the song").append(" : ").append(currentQuestion);
+                    songText.setText(builder.toString());
+
+                } else {
+                    // All questions asked, game over
+                    endGame();
+                }
+            }
+        });
 
     }
 
+    public void checkAnswer(View view) {
+        if (currentGame) {
+            String userAnswer = guessSongEdit.getText().toString().trim();
+            String correctAnswer = artistAnswers.get(currentQuestionIndex);
+            if (userAnswer.isEmpty()) {
+                Toast.makeText(this, "Submit an Answer", Toast.LENGTH_SHORT).show();
+            } else if (userAnswer.equalsIgnoreCase(correctAnswer)) {
+                // Correct answer, update score
+                playerScoreValue += 10;
+                // Move to the next question
+                currentQuestionIndex++;
 
-     public void check(View view) {
+                askNextQuestion();
+            } else {
+                StringBuilder builder = new StringBuilder();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Display current question
+                        builder.append("Game Over! Correct answer").append(" : ").append(correctAnswer);
+                        // Incorrect answer, game over
+                        songText.setText(builder.toString());
+                        endGame();
+                    }
+                });
+                // Incorrect answer, game over
+                songText.setText("Game Over! Correct answer: " + correctAnswer);
+                endGame();
+            }
+            // Clear user input field
+            guessSongEdit.getText().clear();
+        }
 
     }
+
+    // Method to end the game
+    private void endGame() {
+        currentGame = false;
+        if (currentQuestionIndex == trackQuestions.size()) {
+            // All questions answered, display final message
+            songText.setText("You Win! Final Score: " + playerScore);
+        }
+    }
+
+    public void playAgain() {
+        if (currentGame) {
+            Toast.makeText(this, "Game in progress", Toast.LENGTH_SHORT).show();
+        } else {
+            playGame();
+        }
+    }
+
+    public void backToHomePage(View view) {
+        endGame();
+        Intent sign = new Intent(this, firebaseUserManager.class);
+        String authentication = "homepage";
+        sign.putExtra("userAction", authentication);
+        startActivity(sign);
+        finish();
+    }
+
 
 
 }

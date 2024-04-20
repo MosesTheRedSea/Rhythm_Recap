@@ -31,6 +31,10 @@
             <!-- intent filters if any -->
         </activity>
 
+        <activity android:name=".game">
+            <!-- intent filters if any -->
+        </activity>
+
 
         <activity
             android:name=".applicationCore"

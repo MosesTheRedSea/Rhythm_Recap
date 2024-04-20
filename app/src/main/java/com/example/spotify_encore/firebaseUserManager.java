@@ -221,6 +221,8 @@ public class firebaseUserManager extends AppCompatActivity {
 
     TextView viewSumArtist;
 
+    TextView gameImageButton;
+
     private MediaPlayer mediaPlayer;
     private MediaPlayer summaryMediaPlayer;
     private Queue<String> trackUrls;
@@ -230,6 +232,7 @@ public class firebaseUserManager extends AppCompatActivity {
     List<JSONObject> wrapsJsonList;
     private int currentIndex = 0;
 
+    /*
     private void deleteUserAccount(FirebaseUser user) {
         user.delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -330,6 +333,36 @@ public class firebaseUserManager extends AppCompatActivity {
         }
     }
 
+     */
+
+    private void deleteUserAccount(String userId) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+
+        // Delete Spotify access token
+        userRef.child("spotifyAccessToken").removeValue();
+
+        // Delete wraps
+        DatabaseReference wrapsRef = userRef.child("Wraps");
+        wrapsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot wrapSnapshot : dataSnapshot.getChildren()) {
+                    wrapSnapshot.getRef().removeValue(); // Delete each wrap
+                }
+                // After deleting all wraps, remove the wraps node
+                wrapsRef.removeValue();
+
+                // Delete user account
+                userRef.removeValue();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+    }
+
     // These are only outline methods they can be changed if needed
     @SuppressLint("CutPasteId")
     @Override
@@ -342,7 +375,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
         if (user == null) {
             // If user is not signed in, redirect to authentication activity (assuming authentication.class is your sign-in activity)
-            Intent intent = new Intent(getApplicationContext(), authentication.class);
+            Intent intent = new Intent(getApplicationContext(), login.class);
             intent.putExtra("userAction", "LogIn");
             startActivity(intent);
             finish();
@@ -391,7 +424,7 @@ public class firebaseUserManager extends AppCompatActivity {
                     deleteAccount.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            deleteUserAccount(user);
+                            deleteUserAccount(user.getUid());
 
                         }
                     });
@@ -440,15 +473,14 @@ public class firebaseUserManager extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             // Sign out user
-                            userSignOut();
+                            auth.signOut();
                             // Redirect to login activity
-                            Intent sign = new Intent(getApplicationContext(), firebaseUserManager.class);
-                            String authentication = "login";
-                            sign.putExtra("userAction", authentication);
+                            Intent sign = new Intent(getApplicationContext(), login.class);
                             startActivity(sign);
                             finish();
                         }
                     });
+
                 } else if (action.equals("homepage")) {
                     // Set content view to homepage layout
                     setContentView(R.layout.homepage);
@@ -473,19 +505,6 @@ public class firebaseUserManager extends AppCompatActivity {
                             finish();
                         }
                     });
-
-                } else if (action.equals("gamepage")) {
-                    setContentView(R.layout.game);
-                    //balls
-
-
-                    checkWinner = findViewById(R.id.checkIfYouWinButton);
-                     gameImage = findViewById(R.id.gameImage);
-                     guessSongEdit = findViewById(R.id.guessSongEdit);
-                     songText = findViewById(R.id.songText);
-                     gameDirectionsText = findViewById(R.id.gameDirectionsText);
-
-
 
                 } else if (action.equals("profile")) {
                     setContentView(R.layout.profile);
@@ -922,6 +941,7 @@ public class firebaseUserManager extends AppCompatActivity {
         startActivity(sign);
         finish();
     }
+
     public void profileButtonClick(View view) {
         Intent sign = new Intent(this, firebaseUserManager.class);
         String authentication = "profile";
@@ -998,14 +1018,7 @@ public class firebaseUserManager extends AppCompatActivity {
 
 
 
-    public void userSignOut() {
-        auth.signOut();
-        Intent sign = new Intent(getApplicationContext(), authentication.class);
-        String authentication = "LogIn";
-        sign.putExtra("userAction", authentication);
-        startActivity(sign);
-        finish();
-    }
+
 
 
 
