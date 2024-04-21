@@ -1,4 +1,6 @@
-# Rhythm Recap 🎵
+![Screenshot 2024-04-19 153632](https://github.com/MosesTheRedSea/Rhythm_Recap/assets/69429336/67ac9c02-df0f-408c-a811-81a92a8f7920)
+# Rhythm Recap 
+
 
 Welcome to Rhythm Recap , your year-round music and podcast statistics hub! 
 
